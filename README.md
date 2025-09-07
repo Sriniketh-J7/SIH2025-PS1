@@ -7,7 +7,7 @@ Link: https://www.sih.gov.in/sih2025PS/
 
 1) fork it (done forget to 'sync fork' each time you are going to work on the codebase)
 2) "git clone https://github.com/Sriniketh-J7/SIh2025-1.git" to local terminal
-3) npm i each time
+3) "npm i" each time
 
 To update this global repo 
 1) git checkout -b your-name
