@@ -13,7 +13,7 @@ jobs:
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           message: |
-            🚀 New push in **${{ github.repository }}**
+            🚀 New push to github in **${{ github.repository }}**
             👤 By: ${{ github.actor }}
             📌 Branch: ${{ github.ref_name }}
             🔗 Commit: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
