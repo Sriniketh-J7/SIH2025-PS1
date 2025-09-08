@@ -1,5 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
+import generateToken from "../utils/generateToken.js";
+
 
 export const signup = async (req, res) => {
   const { userName, password } = req.body;
@@ -25,14 +27,20 @@ export const signup = async (req, res) => {
   });
 
   await newUser.save();
+
+  const token = generateToken({
+    _id: newUser._id,
+    userName: newUser.userName,
+  });
+  res.status(201).json(token);
 };
 
 export const login = async (req, res) => {
   const { userName, password } = req.body;
 
-  if (!username || !password) {
+  if (!userName || !password) {
     return res.status(400).json({
-      message: !username ? "Username required" : "Password required",
+      message: !userName ? "Username required" : "Password required",
       success: false,
     });
   }
@@ -50,5 +58,6 @@ export const login = async (req, res) => {
       success: false,
     });
   }
-  
+  const token = generateToken({ _id: user._id, userName: user.userName });
+    res.json(token);
 };
