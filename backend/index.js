@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 
 //importing files
 import userRoutes from "./routes/user.routes.js"
-
+import reportRoutes from "./routes/report.routes.js"
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -29,6 +29,7 @@ mongoose
 
 //Routes
 app.use("/api/user", userRoutes)
+app.use("/api/report", reportRoutes)
 
 //starting the server
 app.listen(PORT, () => {
