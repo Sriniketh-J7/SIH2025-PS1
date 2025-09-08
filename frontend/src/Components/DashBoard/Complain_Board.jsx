@@ -1,0 +1,49 @@
+
+import { ComplainBox } from "./Complain_box"
+import {useState} from "react"
+
+export const ComplainBoard = () => {
+
+    const [dashboardInfo, setDashboardInfo] = useState(
+       [ {
+            Heading: "Fix broken air conditioning unit in main office",
+            Progress: "Submitted",
+            Location: "Building A Floor 3, Room 301"
+        },
+        {
+            Heading: "Fix broken air conditioning unit in main office",
+            Progress: "Submitted",
+            Location: "Building A Floor 3, Room 301"
+        },
+        {
+            Heading: "Fix broken air conditioning unit in main office",
+            Progress: "Submitted",
+            Location: "Building A Floor 3, Room 301"
+        },
+        {
+            Heading: "Fix broken air conditioning unit in main office",
+            Progress: "Submitted",
+            Location: "Building A Floor 3, Room 301"
+        },
+        {
+            Heading: "Fix broken air conditioning unit in main office",
+            Progress: "Submitted",
+            Location: "Building A Floor 3, Room 301"
+        },
+        {
+            Heading: "Fix broken air conditioning unit in main office",
+            Progress: "Submitted",
+            Location: "Building A Floor 3, Room 301"
+        },
+    ]
+    )
+
+    return (
+        <div className="  grid grid-cols-1 sm:grid-cols-2 gap-12 bg-slate-100 p-3 mt-6 rounded-lg">
+            {dashboardInfo.map((info) => {
+               return (<ComplainBox {...info}></ComplainBox> )  
+            })}
+        
+        </div>
+    )
+}

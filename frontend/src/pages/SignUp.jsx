@@ -1,7 +1,7 @@
-import { Heading } from "../Components/Heading"
-import { SubHeading } from "../Components/SubHeading"
-import { InputBox } from "../Components/InputBox"
-import { Button } from "../Components/Button"
+import { Heading } from "../Components/SignUp/Heading"
+import { SubHeading } from "../Components/SignUp/SubHeading"
+import { InputBox } from "../Components/SignUp/InputBox"
+import { Button } from "../Components/SignUp/Button"
 import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
