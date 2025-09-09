@@ -1,3 +1,8 @@
+import { Button } from "../Components/SignUp/Button";
+import { Heading } from "../Components/SignUp/Heading";
+import { InputBox } from "../Components/SignUp/InputBox";
+import { SubHeading } from "../Components/SignUp/SubHeading";
+
 export const SignIn = () => {
   return (
     <div>
