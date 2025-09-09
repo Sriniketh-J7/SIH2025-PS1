@@ -1,5 +1,6 @@
 import Technician from "../models/technician.model.js";
 import generateToken from "../utils/generateToken.js";
+import Report from "../models/report.model.js";
 import bcrypt from "bcrypt";
 
 export const signuptech = async (req, res) => {
@@ -97,8 +98,75 @@ export const task = async (req, res) => {
   res.json({ task: report });
 };
 
-export const startTask = async (req, res) => {};
+export const startTask = async (req, res) => {
+  const { id } = req.params;
 
-export const updateTask = async (req, res) => {};
+  try {
+    const report = await Report.findById(id);
 
-export const resolveTask = async (req, res) => {};
+    if (!report) return res.status(404).json({ message: "Task not found" });
+
+    // Ensure the technician is assigned to this task
+    if (report.technicianId?.toString() !== req.technicianId.toString()) {
+      return res.status(403).json({ message: "Not authorized for this task" });
+    }
+
+    report.status = "Started";
+    await report.save();
+
+    res.json({ message: "Task marked as In Progress", task: report });
+  } catch (error) {
+    console.error("Error starting task:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// PATCH /technician/tasks/:id/update → add notes/photos while working
+export const updateTask = async (req, res) => {
+  const { id } = req.params;
+  const { description, imageUrl } = req.body;
+
+  try {
+    const report = await Report.findById(id);
+
+    if (!report) return res.status(404).json({ message: "Task not found" });
+
+    if (report.technicianId?.toString() !== req.technicianId.toString()) {
+      return res.status(403).json({ message: "Not authorized for this task" });
+    }
+
+    // Update fields while working
+    if (note) report.technicianNotes.push(note);
+    if (imageUrl) report.technicianImages.push(imageUrl);
+
+    await report.save();
+
+    res.json({ message: "Task updated", task: report });
+  } catch (error) {
+    console.error("Error updating task:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// PATCH /technician/tasks/:id/resolve → mark as Resolved
+export const resolveTask = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const report = await Report.findById(id);
+
+    if (!report) return res.status(404).json({ message: "Task not found" });
+
+    if (report.technicianId?.toString() !== req.technicianId.toString()) {
+      return res.status(403).json({ message: "Not authorized for this task" });
+    }
+
+    report.status = "Finished";
+    await report.save();
+
+    res.json({ message: "Task resolved successfully", task: report });
+  } catch (error) {
+    console.error("Error resolving task:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
