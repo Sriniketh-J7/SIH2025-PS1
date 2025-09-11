@@ -8,6 +8,7 @@ import mongoose from "mongoose";
 import userRoutes from "./routes/user.routes.js";
 import reportRoutes from "./routes/report.routes.js";
 import technicianRoutes from "./routes/technician.routes.js";
+import assignTechnician from "./routes/tp.routes.js"
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -29,6 +30,7 @@ mongoose
 app.use("/api/user", userRoutes);
 app.use("/api/report", reportRoutes);
 app.use("/api/technician", technicianRoutes);
+app.use("/reportAssign", assignTechnician)
 //starting the server
 app.listen(PORT, () => {
   console.log(`Server is listening on Port ${PORT}..`);
