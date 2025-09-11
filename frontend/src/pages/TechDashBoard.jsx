@@ -1,9 +1,9 @@
-import { Header } from "../Components/DashBoard/Header"
-import { StatusBoard } from "../Components/DashBoard/StatusBoard"
-import { ComplainBoard } from "../Components/DashBoard/Complain_Board"
+import { Header } from "../Components/TechDashBoard/Header"
+import { StatusBoard } from "../Components/TechDashBoard/StatusBoard"
+import { ComplainBoard } from "../Components/TechDashBoard/Complain_Board"
 
 
-export const Dashboard = () => {
+export const TechDashboard = () => {
     return (
         <>
             <div className="bg-white p-5">
