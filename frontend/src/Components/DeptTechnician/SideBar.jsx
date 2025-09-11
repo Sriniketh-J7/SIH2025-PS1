@@ -1,6 +1,7 @@
 
 
  import { BarChart2, FileText, Users, MessageSquare, Settings } from 'lucide-react';
+ import { NavLink } from "react-router-dom";
  import { useState } from 'react';
 export const SideBar = ( ) => {
 
@@ -8,11 +9,11 @@ export const SideBar = ( ) => {
 
 
     const menuItems = [
-        {name: "Dashboard Overview", icon: <BarChart2/>},
-        {name: "My Department Report", icon: <FileText size={20}/>},
-        {name: "My Technicians", icon: <Users/>},
-        {name: "Citizen Feedback", icon: <MessageSquare/>},
-        {name: "Profile & Settings", icon: <Settings/>},
+        {name: "Dashboard Overview", icon: <BarChart2/>, path: "/DeptDashboard"},
+        {name: "My Department Report", icon: <FileText size={20}/> , path: "/DeptReports"},
+        {name: "My Technicians", icon: <Users/>, path: "/DeptTechnician"},
+        {name: "Citizen Feedback", icon: <MessageSquare/>, path:"/DeptCitizen"},
+        {name: "Profile & Settings", icon: <Settings/>, path:"/DeptProfile"}
     ];
 
 
@@ -25,16 +26,21 @@ export const SideBar = ( ) => {
                     <p className="text-gray-400">Admin Dashboard</p>
                 </div>
             </div>
-            <div className="mt-14 flex-1 space-y-4 ">
-                {menuItems.map((item) => {
-                    return(
-
-                        <button onClick={() => {setActive(item.name)}} className= {`text-gray-400 flex space-x-3 px-6 py-3 cursor-pointer transition-colors rounded-lg ${active === item.name ? "bg-blue-100 text-gray-800": null}`}>
-                            {item.icon}
-                            <span>{item.name}</span>
-                        </button>
-                    )
-                })}
+            <div className="mt-14 flex-1 space-y-4">
+                {menuItems.map((item) => (
+                <NavLink
+                    to={item.path}
+                    className={({ isActive }) =>
+                        
+                    `flex space-x-3 px-6 py-3 rounded-lg transition-colors ${
+                        isActive ? "bg-blue-100 text-gray-800" : "text-gray-400 hover:bg-gray-100"
+                    }`
+                    }
+                >
+                    {item.icon}
+                    <span>{item.name}</span>
+                </NavLink>
+                ))}
             </div>
         </div>
     )
