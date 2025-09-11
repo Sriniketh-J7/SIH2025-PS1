@@ -8,5 +8,5 @@ import { uploadreport } from "../middlewares/uploadreport.js";
 
 //
 router.post("/create",auth, uploadreport, createReport);
-router.get("myReports", auth, myReports)
+router.get("/myReports", auth, myReports)
 export default router;

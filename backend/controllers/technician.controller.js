@@ -49,7 +49,7 @@ export const logintech = async (req, res) => {
     });
   }
   const payload = {
-    id: newTechnician._id,
+    id: technician._id,
     role: "technician",
   };
   const token = generateToken(payload);
@@ -58,28 +58,34 @@ export const logintech = async (req, res) => {
 
 export const alltasks = async (req, res) => {
   try {
-    const technician = await Technician.findById(req.technicianId).populate(
-      "assignedTask"
-    );
+    const technicianId = req.technicianId;
+
+   
+    const tasks = await Report.find({ technicianId })
+      .populate("userId", "userName") 
+      .sort({ createdAt: -1 });
+
+    const technician = await Technician.findById(technicianId);
 
     if (!technician) {
-      return res.status(404).json({ message: "Technician not found" });
+      return res.status(404).json({ message: "Technician not found", success: false });
     }
 
     res.json({
       technician: technician.userName,
-      tasks: technician.assignedTask,
+      tasks,
+      success: true,
     });
   } catch (error) {
     console.error("Error fetching tasks:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", success: false });
   }
 };
-
 export const task = async (req, res) => {
   const { id } = req.params;
 
-  const technician = req.technician;
+  const technicianId = req.technicianId;
+  const technician = await Technician.findById(technicianId);
   if (!technician) {
     return res.status(403).json({ message: "Access denied" });
   }
@@ -124,7 +130,7 @@ export const startTask = async (req, res) => {
 // PATCH /technician/tasks/:id/update → add notes/photos while working
 export const updateTask = async (req, res) => {
   const { id } = req.params;
-  const { description, imageUrl } = req.body;
+
 
   try {
     const report = await Report.findById(id);
@@ -134,11 +140,7 @@ export const updateTask = async (req, res) => {
     if (report.technicianId?.toString() !== req.technicianId.toString()) {
       return res.status(403).json({ message: "Not authorized for this task" });
     }
-
-    // Update fields while working
-    if (note) report.technicianNotes.push(note);
-    if (imageUrl) report.technicianImages.push(imageUrl);
-
+    report.status = "Updated";
     await report.save();
 
     res.json({ message: "Task updated", task: report });

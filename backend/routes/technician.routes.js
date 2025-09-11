@@ -6,7 +6,7 @@ const router = express.Router()
 //
 router.post("/signup", signuptech)
 router.post("/login",  logintech)
-router.get("/tasks", authTechnician, alltasks)
+router.get("/alltasks", authTechnician, alltasks)
 router.get("/tasks/:id", authTechnician, task)
 router.patch("/tasks/:id/start", authTechnician, startTask)
 router.patch("/tasks/:id/update", authTechnician, updateTask)
