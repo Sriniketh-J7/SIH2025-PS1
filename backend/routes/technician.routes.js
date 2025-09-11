@@ -3,7 +3,7 @@ import authTechnician from "../middlewares/authTechnician.js";
 import {alltasks, task, startTask, updateTask, resolveTask, signuptech, logintech} from "../controllers/technician.controller.js"
 const router = express.Router()
 
-//
+
 router.post("/signup", signuptech)
 router.post("/login",  logintech)
 router.get("/tasks", authTechnician, alltasks)
