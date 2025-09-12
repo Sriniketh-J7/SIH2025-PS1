@@ -1,9 +1,21 @@
-import express from "express"
-import { allReports, assignTechnician, getAllTechnicians, SingleReport } from "../controllers/department.controller"
+import express from "express";
+import {
+  allReports,
+  assignTechnician,
+  getAllTechnicians,
+  SingleReport,
+  loginDept,
+  newTech
+} from "../controllers/department.controller.js";
+import { checkDept } from "../middlewares/department.auth.js";
 
-const deptRouter = express.Router()
+const deptRouter = express.Router();
 
-deptRouter.get("/allreports", allReports)
-deptRouter.get("/singleReport/:id", SingleReport);
-deptRouter.patch("/assignTechnician/:reportId/:technicianId",assignTechnician)
-deptRouter.get("allTechnicians", getAllTechnicians)
+deptRouter.post("/loginDept", loginDept); //works
+deptRouter.get("/allreports",checkDept, allReports); // works
+deptRouter.get("/singleReport/:id",checkDept, SingleReport); //works
+deptRouter.get("/createTechnician",checkDept, newTech); //works
+deptRouter.patch("/assignTechnician/:reportId/:technicianId",checkDept, assignTechnician); //works
+deptRouter.get("/allTechnicians", checkDept, getAllTechnicians); //works
+
+export default deptRouter;

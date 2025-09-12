@@ -21,7 +21,7 @@ export const createReport = async (req, res) => {
       
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: "Something went wrong" });
+      res.status(500).json({ error: "Something went wrong",success: false });
     }
 };
 
@@ -36,7 +36,7 @@ export const allReports = async(req, res) =>{
     res.json({ success: true,  reportDetails });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Something went wrong" });
+    res.status(500).json({ error: "Something went wrong" ,success: false});
   }
 }
 
@@ -54,7 +54,7 @@ export const singleReport = async(req, res)=> {
     return res.json({success: true, report, message: "report found"})
   } 
   catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message ,success: false});
   }
 }
 
