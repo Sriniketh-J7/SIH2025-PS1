@@ -58,14 +58,14 @@ export const logintech = async (req, res) => {
 
 export const alltasks = async (req, res) => {
   try {
-    const technicianId = req.technicianId;
+    const assignedTechId = req.technicianId;
 
-   
-    const tasks = await Report.find({ technicianId })
-      .populate("userId", "userName") 
-      .sort({ createdAt: -1 });
+//sort in ascending order 1 to 10, 10 highest priority   
+    const tasksAssigned = await Report.find({ assignedTechId })
+      .select("_id title imageUrl location status priority createdAt")
+      .sort({ priority: 1 });
 
-    const technician = await Technician.findById(technicianId);
+    const technician = await Technician.findById(assignedTechId);
 
     if (!technician) {
       return res.status(404).json({ message: "Technician not found", success: false });
@@ -73,7 +73,7 @@ export const alltasks = async (req, res) => {
 
     res.json({
       technician: technician.userName,
-      tasks,
+      tasksAssigned,
       success: true,
     });
   } catch (error) {
@@ -81,27 +81,28 @@ export const alltasks = async (req, res) => {
     res.status(500).json({ message: "Server error", success: false });
   }
 };
+
 export const task = async (req, res) => {
   const { id } = req.params;
-
-  const technicianId = req.technicianId;
-  const technician = await Technician.findById(technicianId);
-  if (!technician) {
-    return res.status(403).json({ message: "Access denied" });
+  try {
+    const assignedTechId = req.technicianId;
+    const technician = await Technician.findById(assignedTechId);
+    if (!technician) {
+      return res.status(403).json({ success: false, message: "Access denied" });
+    }
+    
+    const report = await Report.findById(id);
+    if (!report) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+    if(report.assignedTechId !== assignedTechId){
+      return res.status(403).json({ message: "This task is not assigned to you" });
+    }
+    return res.json({ success: true, task: report });
   }
-  const isAssigned = technician.assignedTask.some(
-    (reportId) => reportId.toString() === id
-  );
-  if (!isAssigned) {
-    return res
-      .status(403)
-      .json({ message: "This task is not assigned to you" });
+  catch (error) {
+    return res.status(403).json({ success: false, error: error.message });
   }
-  const report = await Report.findById(id);
-  if (!report) {
-    return res.status(404).json({ message: "Task not found" });
-  }
-  res.json({ task: report });
 };
 
 export const startTask = async (req, res) => {
@@ -113,11 +114,12 @@ export const startTask = async (req, res) => {
     if (!report) return res.status(404).json({ message: "Task not found" });
 
     // Ensure the technician is assigned to this task
-    if (report.technicianId?.toString() !== req.technicianId.toString()) {
+    if (report.assignedTechId?.toString() !== req.technicianId.toString()) {
       return res.status(403).json({ message: "Not authorized for this task" });
     }
 
-    report.status = "Started";
+    report.status = "InProgress";
+    report.startedAt = new Date(); 
     await report.save();
 
     res.json({ message: "Task marked as In Progress", task: report });
@@ -137,7 +139,7 @@ export const updateTask = async (req, res) => {
 
     if (!report) return res.status(404).json({ message: "Task not found" });
 
-    if (report.technicianId?.toString() !== req.technicianId.toString()) {
+    if (report.assignedTechId?.toString() !== req.technicianId.toString()) {
       return res.status(403).json({ message: "Not authorized for this task" });
     }
     report.status = "Updated";
@@ -159,16 +161,20 @@ export const resolveTask = async (req, res) => {
 
     if (!report) return res.status(404).json({ message: "Task not found" });
 
-    if (report.technicianId?.toString() !== req.technicianId.toString()) {
+    if (report.assignedTechId?.toString() !== req.technicianId.toString()) {
       return res.status(403).json({ message: "Not authorized for this task" });
     }
+  if (req.file) {
+    //uplaod iamge
+    report.resolvedImageUrl = req.file.path;
+  }
 
-    report.status = "Finished";
+    report.status = "Completed";
     await report.save();
 
-    res.json({ message: "Task resolved successfully", task: report });
+    res.json({success: true, message: "Task resolved successfully", task: report });
   } catch (error) {
     console.error("Error resolving task:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({success: false, message: "Server error" });
   }
 };

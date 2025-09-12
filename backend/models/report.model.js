@@ -1,15 +1,37 @@
-import mongoose, { mongo, Schema } from "mongoose"
+import mongoose from "mongoose"
 
-const reportSchema = new mongoose.Schema({
-    userId: {type: mongoose.Schema.Types.ObjectId, ref: "User", required: true},
-    technicianId: { type: mongoose.Schema.Types.ObjectId, ref: "Technician" },
-    title: {type: String, required: true},
-    description: {type: String},
-    imageUrl: {type: String},
-    voiceUrl: {type: String},
-    status: {type: String,enum: ["Started", "Finished", "Pending","Updated"], default: "Pending"},
-    createdAt: {type: Date, default: Date.now}
-});
+const reportSchema = new mongoose.Schema(
+  {
+    reportId:{type:String, required: true},
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    title: { type: String, required: true },
+    imageUrl: { type: String, required: true },
+    location: {
+      address: { type: String },
+      latitude: { type: Number, required: true },
+      longitude: { type: Number, required: true },
+    },
+    description: { type: String, default: undefined },
+    voiceUrl: { type: String, default: undefined },
+    priority: { type: String, required: true },
+    status: {
+      type: String,
+      enum: ["Pending", "InProgress", "Assigned", "Completed"],
+      default: "Pending",
+    },
+    deptName: { type: String, required: true },
+    assignedTechId: { type: mongoose.Schema.Types.ObjectId, ref: "Technician" }, // linked technician
+    startedAt: { type: Date, default: null },
+    resolvedTime: { type: Date, default: undefined },
+    resolvedImageUrl: { type: String, default: undefined },
+    feedback: { type: String, default: null },
+  },
+  { timestamps: true }
+);
 
 
 const Report = mongoose.model("Report", reportSchema);

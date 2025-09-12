@@ -3,9 +3,9 @@ import mongoose from "mongoose"
 const technicianSchema = new mongoose.Schema({
     userName: {type: String, required: true},
     password: {type: String, required: true},
-    assignedTask: [{type: mongoose.Schema.Types.ObjectId, ref: "Report"}],
-    status: {type: String, enum: ["available", "Busy", "inactive"], default: "available"}
-});
+    deptName: {type: String, required: true},
+    status: {type: String, enum: ["Available", "Busy", "Inactive"], default: "Available"}
+}, {timestamps: true});
 
 const Technician = mongoose.model("Technician", technicianSchema)
 

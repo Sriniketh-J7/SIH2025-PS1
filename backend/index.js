@@ -9,6 +9,7 @@ import userRoutes from "./routes/user.routes.js";
 import reportRoutes from "./routes/report.routes.js";
 import technicianRoutes from "./routes/technician.routes.js";
 import assignTechnician from "./routes/tp.routes.js"
+import Department from "./models/department.model.js";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -26,11 +27,21 @@ mongoose
     console.log("MongoDB Connection Failed", err);
   });
 
+
+
+
+  
 //Routes
 app.use("/api/user", userRoutes);
 app.use("/api/report", reportRoutes);
 app.use("/api/technician", technicianRoutes);
-app.use("/reportAssign", assignTechnician)
+// app.use("/reportAssign", assignTechnician)
+app.use("/api/department", Department)
+
+
+
+
+
 //starting the server
 app.listen(PORT, () => {
   console.log(`Server is listening on Port ${PORT}..`);

@@ -7,5 +7,4 @@ export const uploadreport = uploadReport.fields([
 import { uploadTechnician } from "../config/cloudinary.js";
 export const uploadtechnician = uploadTechnician.fields([
   { name: "image", maxCount: 1 },
-  { name: "audio", maxCount: 1 },
 ]);
