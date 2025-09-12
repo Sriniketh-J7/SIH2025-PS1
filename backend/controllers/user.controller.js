@@ -32,7 +32,7 @@ export const signup = async (req, res) => {
     _id: newUser._id,
     userName: newUser.userName,
   });
-  res.status(201).json(token);
+  res.status(201).json({token, message: "Token Generated Successfully", success: true});
 };
 
 export const login = async (req, res) => {
@@ -48,7 +48,7 @@ export const login = async (req, res) => {
   const user = await User.findOne({ userName });
 
   if (!user) {
-    return res.status(400).json({ message: "Username not Found!" });
+    return res.status(400).json({ message: "Username not Found!" , success: false});
   }
 
   const validPassword = await bcrypt.compare(password, user.password);
@@ -59,6 +59,6 @@ export const login = async (req, res) => {
     });
   }
   const token = generateToken({ _id: user._id, userName: user.userName });
-    res.json(token);
+    res.status(201).json({token, message: "Token Generated Successfully", success: true});
 };
 
