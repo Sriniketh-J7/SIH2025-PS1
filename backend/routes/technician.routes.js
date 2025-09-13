@@ -4,10 +4,10 @@ import {alltasks, task, startTask, resolveTask, logintech} from "../controllers/
 const router = express.Router()
 
 
-router.post("/login",  logintech) //works
-router.get("/alltasks", authTechnician, alltasks) //works
-router.get("/tasks/:id", authTechnician, task) //works
-router.patch("/tasks/:id/start", authTechnician, startTask) //works
+router.post("/login",  logintech) //works //
+router.get("/alltasks", authTechnician, alltasks) //works //getalltasks
+router.get("/tasks/:id", authTechnician, task) //works //singletask
+router.patch("/tasks/:id/start", authTechnician, startTask) //works 
 router.patch("/tasks/:id/resolve", authTechnician, resolveTask) //works
 
 
