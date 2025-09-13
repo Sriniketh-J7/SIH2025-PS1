@@ -1,5 +1,4 @@
 import './App.css'
-
 import {BrowserRouter, Routes, Route} from 'react-router-dom'
 import { SignUp } from './pages/SignUp'
 import { TechDashboard } from './pages/TechDashBoard'
@@ -7,6 +6,11 @@ import { SignIn } from './pages/SignIn'
 import { DeptTechnician } from './pages/DeptTechnician'
 import { DeptDashboard } from './pages/DeptDashboard'
 import { DeptReports } from './pages/DeptReports'
+import { UserHomePage } from './pages/UserHomePage'
+import {UserReportsPage} from './pages/UserReportsPage'
+import {UserNewReport} from './pages/UserNewReport'
+import {ReportNewIssue} from './pages/ReportNewIssue'
+import {ReportDetails} from './pages/UserReportDetail'
 
 
 export default function App() {
@@ -20,8 +24,13 @@ export default function App() {
         <Route path='/DeptTechnician' element = {<DeptTechnician></DeptTechnician>}></Route>
         <Route path='/DeptDashboard' element = {<DeptDashboard></DeptDashboard>}></Route>
         <Route path='/DeptReports' element = {<DeptReports></DeptReports>}></Route>
-        
+        <Route path='/UserHomePage' element = {<UserHomePage></UserHomePage>}></Route>  
         <Route path='/login' element = {<SignIn></SignIn>}></Route>
+        <Route path='/UserReportsPage' element = {<UserReportsPage></UserReportsPage>}></Route>
+        <Route path='/UserNewReport' element = {<UserNewReport></UserNewReport>}></Route>
+        <Route path='/UserReportDetail' element = {<ReportDetails></ReportDetails>}></Route>
+        <Route path='/ReportNewIssue' element = {<ReportNewIssue></ReportNewIssue>}></Route>
+
 
       </Routes>
      
