@@ -17,12 +17,14 @@ export default function App() {
      <BrowserRouter>
       <Routes >
         <Route path='/' element={<SignUp/>}></Route>
+        <Route path='/login' element = {<SignIn></SignIn>}></Route>
         <Route path='/TechDashboard' element = {<TechDashboard></TechDashboard>}></Route>
-        <Route path='/DeptTechnician' element = {<DeptTechnician></DeptTechnician>}></Route>
-        <Route path='/DeptDashboard' element = {<DeptDashboard></DeptDashboard>}></Route>
+
+
+        <Route path='/DeptTechnicians' element = {<DeptTechnician></DeptTechnician>}></Route>
+        <Route path='/DeptOverview' element = {<DeptDashboard></DeptDashboard>}></Route>
         <Route path='/DeptReports' element = {<DeptReports></DeptReports>}></Route>
         
-        <Route path='/login' element = {<SignIn></SignIn>}></Route>
 
       </Routes>
      

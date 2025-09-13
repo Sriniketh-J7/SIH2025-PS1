@@ -3,17 +3,43 @@ import Department from "../models/department.model.js";
 import Technician from "../models/technician.model.js";
 import bcrypt from "bcrypt";
 import generateToken from "../utils/generateToken.js";
+
+//remove later
+export async function signup(req, res) {
+  try {
+    const { deptName, deptHeadName, password } = req.body;
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create the department
+    const deptData = await Department.create({
+      deptName,
+      deptHeadName,
+      password: hashedPassword,
+    });
+
+    res.send({ success: true, deptData });
+  } catch (error) {
+    res.send({ success: false, error: error.message });
+  }
+}
+
 export async function loginDept(req, res) {
   try {
-    const { deptHeadName, password } = req.body;
+    const { username: deptHeadName, password } = req.body;
     const dept = await Department.findOne({ deptHeadName });
     if (!dept) {
-      return res.status(404).json({ message: "Department not found",success: false });
+      return res
+        .status(404)
+        .json({ message: "Department not found", success: false });
     }
 
     const isMatch = await bcrypt.compare(password, dept.password);
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid credentials",success: false });
+      return res
+        .status(401)
+        .json({ message: "Invalid credentials", success: false });
     }
 
     const payload = {
@@ -23,10 +49,12 @@ export async function loginDept(req, res) {
     // generate token with dept id
     const token = generateToken(payload);
 
+    // Set the token in the Authorization header
+    res.setHeader("Authorization", `Bearer ${token}`);
+    res.setHeader("Access-Control-Expose-Headers", "Authorization");
     res.json({
       success: true,
       message: "Login successful",
-      token,
       dept: {
         id: dept._id,
         deptName: dept.deptName,
@@ -166,7 +194,6 @@ export async function getAllTechnicians(req, res) {
     const department = await Department.findOne({ deptName }).populate(
       "technicians"
     );
-    console.log(department);
 
     if (!department || department.technicians.length === 0) {
       return res.json({ success: false, message: "No technicians found" });
@@ -226,4 +253,9 @@ export async function newTech(req, res) {
     console.error(error);
     return res.status(500).json({ message: "Server error", success: false });
   }
+}
+
+
+export async function checkAuth(req, res) {
+  return res.json({ success: true, deptData: req.department });
 }

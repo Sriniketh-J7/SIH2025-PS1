@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import Department from "../models/department.model.js";
 
-export async function checkDept(req, res, next) {
+export async function protectRoute(req, res, next) {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {

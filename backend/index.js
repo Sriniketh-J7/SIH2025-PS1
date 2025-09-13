@@ -10,7 +10,7 @@ import reportRoutes from "./routes/report.routes.js";
 import technicianRoutes from "./routes/technician.routes.js";
 import deptRouter from "./routes/department.routes.js"
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 //middlewares
 app.use(cors());

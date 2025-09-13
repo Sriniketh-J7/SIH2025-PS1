@@ -5,17 +5,21 @@ import {
   getAllTechnicians,
   SingleReport,
   loginDept,
-  newTech
+  newTech,
+  checkAuth,
+  signup
 } from "../controllers/department.controller.js";
-import { checkDept } from "../middlewares/department.auth.js";
+import { protectRoute } from "../middlewares/department.auth.js";
 
 const deptRouter = express.Router();
 
+deptRouter.post("/signup", signup)
 deptRouter.post("/loginDept", loginDept); //works
-deptRouter.get("/allreports",checkDept, allReports); // works
-deptRouter.get("/singleReport/:id",checkDept, SingleReport); //works
-deptRouter.get("/createTechnician",checkDept, newTech); //works
-deptRouter.patch("/assignTechnician/:reportId/:technicianId",checkDept, assignTechnician); //works
-deptRouter.get("/allTechnicians", checkDept, getAllTechnicians); //works
+deptRouter.get("/allreports",protectRoute, allReports); // works
+deptRouter.get("/singleReport/:id",protectRoute, SingleReport); //works
+deptRouter.get("/createTechnician",protectRoute, newTech); //works
+deptRouter.patch("/assignTechnician/:reportId/:technicianId",protectRoute, assignTechnician); //works
+deptRouter.get("/allTechnicians", protectRoute, getAllTechnicians); //works
+deptRouter.get("/checkAuth", protectRoute, checkAuth); 
 
 export default deptRouter;

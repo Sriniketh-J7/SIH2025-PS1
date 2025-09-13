@@ -9,11 +9,27 @@ export const SideBar = ( ) => {
 
 
     const menuItems = [
-        {name: "Dashboard Overview", icon: <BarChart2/>, path: "/DeptDashboard"},
-        {name: "My Department Report", icon: <FileText size={20}/> , path: "/DeptReports"},
-        {name: "My Technicians", icon: <Users/>, path: "/DeptTechnician"},
-        {name: "Citizen Feedback", icon: <MessageSquare/>, path:"/DeptCitizen"},
-        {name: "Profile & Settings", icon: <Settings/>, path:"/DeptProfile"}
+      {
+        name: "Dashboard Overview",
+        icon: <BarChart2 />,
+        path: "/DeptOverview",
+      },
+      {
+        name: "My Department Report",
+        icon: <FileText size={20} />,
+        path: "/DeptReports",
+      },
+      { name: "My Technicians", 
+        icon: <Users />, 
+        path: "/DeptTechnicians" },
+      {
+        name: "Citizen Feedback",
+        icon: <MessageSquare />,
+        path: "/DeptCitizen",
+      },
+      { name: "Profile & Settings", 
+        icon: <Settings />, 
+        path: "/DeptProfile" },
     ];
 
 

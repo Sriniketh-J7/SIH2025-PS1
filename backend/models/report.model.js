@@ -17,10 +17,10 @@ const reportSchema = new mongoose.Schema(
     },
     description: { type: String, default: undefined },
     voiceUrl: { type: String, default: undefined },
-    priority: { type: String, required: true },
+    priority: { type: String, required: true, enum: ["High", "Meidum", "Low"] },
     status: {
       type: String,
-      enum: ["Pending", "InProgress", "Assigned", "Completed"],
+      enum: ["Pending", "InProgress", "Assigned", "Resolved"],
       default: "Pending",
     },
     deptName: { type: String, required: true },
