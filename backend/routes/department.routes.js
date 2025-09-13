@@ -22,5 +22,6 @@ deptRouter.get("/createTechnician",protectRoute, newTech); //works
 deptRouter.patch("/assignTechnician/:reportId/:technicianId",protectRoute, assignTechnician); //works
 deptRouter.get("/allTechnicians", protectRoute, getAllTechnicians); //works
 deptRouter.get("/checkAuth", protectRoute, checkAuth); 
-deptRouter.post("/assignTechnician/:reportId/assign", protectRoute, taskAssigned)
+deptRouter.post("/assignTechnician/:id/assign", protectRoute, taskAssigned)
+
 export default deptRouter;

@@ -211,7 +211,7 @@ export async function getAllTechnicians(req, res) {
 
 export async function taskAssigned(req, res) {
   try {
-    const { reportId } = req.params;  
+    const { id } = req.params;  
     const { technicianId } = req.body;
 
     // Check if technician exists
@@ -220,24 +220,22 @@ export async function taskAssigned(req, res) {
       return res.status(404).json({ success: false, message: "Technician not found" });
     }
     
-     const report = await Report.findOne({ reportId });
-    if (!report) {
+    // Assign technician to report
+    const updatedReport = await Report.findByIdAndUpdate(
+      id,
+      { assignedTechId: technicianId, status: "Assigned" }, // update fields
+      { new: true } // return updated document
+    ).populate("assignedTechId");
+    
+    
+    if (!updatedReport) {
       return res.status(404).json({ success: false, message: "Report not found" });
     }
-    console.log(report);
-    
-   
-    
-    // update report
-    report.assignedTechId = technicianId;
-    report.status = "Assigned";
-    await report.save();
 
-    await report.populate("assignedTechId");
     return res.json({
       success: true,
       message: "Technician assigned successfully",
-      report
+      report: updatedReport,
     });
   } catch (error) {
     res.status(500).json({
