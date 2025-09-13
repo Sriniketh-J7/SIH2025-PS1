@@ -14,7 +14,6 @@ export const SignUp = () => {
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const navigate = useNavigate();
-    
 
     return (
         <>
