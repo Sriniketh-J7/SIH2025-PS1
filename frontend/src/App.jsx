@@ -13,6 +13,7 @@ import {ReportNewIssue} from './pages/ReportNewIssue'
 import {ReportDetails} from './pages/UserReportDetail'
 
 
+
 export default function App() {
 
   return (
@@ -20,12 +21,16 @@ export default function App() {
      <BrowserRouter>
       <Routes >
         <Route path='/' element={<SignUp/>}></Route>
-        <Route path='/TechDashboard' element = {<TechDashboard></TechDashboard>}></Route>
-        <Route path='/DeptTechnician' element = {<DeptTechnician></DeptTechnician>}></Route>
-        <Route path='/DeptDashboard' element = {<DeptDashboard></DeptDashboard>}></Route>
-        <Route path='/DeptReports' element = {<DeptReports></DeptReports>}></Route>
-        <Route path='/UserHomePage' element = {<UserHomePage></UserHomePage>}></Route>  
         <Route path='/login' element = {<SignIn></SignIn>}></Route>
+        <Route path='/TechDashboard' element = {<TechDashboard></TechDashboard>}></Route>
+
+
+        <Route path='/DeptTechnicians' element = {<DeptTechnician></DeptTechnician>}></Route>
+        <Route path='/DeptOverview' element = {<DeptDashboard></DeptDashboard>}></Route>
+        <Route path='/DeptReports' element = {<DeptReports></DeptReports>}></Route>
+
+                                        
+        <Route path='/UserHomePage' element = {<UserHomePage></UserHomePage>}></Route>  
         <Route path='/UserReportsPage' element = {<UserReportsPage></UserReportsPage>}></Route>
         <Route path='/UserNewReport' element = {<UserNewReport></UserNewReport>}></Route>
         <Route path='/UserReportDetail' element = {<ReportDetails></ReportDetails>}></Route>

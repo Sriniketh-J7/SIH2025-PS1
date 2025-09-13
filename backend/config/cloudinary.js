@@ -36,4 +36,14 @@ const storage = new CloudinaryStorage({
 });
 
 export const uploadReport = multer({ storage });
+const technicianStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "technician_uploads",
+    resource_type: "image",
+    allowed_formats: ["jpg", "jpeg", "png"], //need to add more types of files
+  },
+});
+
+export const uploadTechnician = multer({ storage: technicianStorage });
 export default cloudinary;

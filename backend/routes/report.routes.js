@@ -1,12 +1,12 @@
 import express from "express";
 const router = express.Router();
 
-import { createReport, myReports } from "../controllers/report.controller.js";
+import { allReports, createReport, singleReport } from "../controllers/report.controller.js";
 import auth from "../middlewares/auth.js"
 import { uploadreport } from "../middlewares/uploadreport.js";
 
 
-//
-router.post("/create",auth, uploadreport, createReport);
-router.get("myReports", auth, myReports)
+router.post("/create",auth, uploadreport, createReport); //need to check
+router.get("/allReports", auth, allReports) //works
+router.get("/singleReport/:id", auth, singleReport) //works
 export default router;
