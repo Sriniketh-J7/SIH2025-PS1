@@ -1,16 +1,25 @@
 import Report from "../models/report.model.js";
 
-
+//rpt-001,rpt-002,etc
 export const createReport = async (req, res) => {
    try {
-      const { title, description } = req.body;
+      const { title, description, priority, deptName, location } = req.body;
       const userId = req.user._id;
+
+
+       const reportCount = await Report.countDocuments({ deptName });
+
+    // Create new reportId (pad with leading zeros)
+    const newReportId = `RPT-${String(reportCount + 1).padStart(3, "0")}`;
+
+
       const newReport = new Report({
+        reportId: newReportId,
         userId,
         title,
         description,
         imageUrl: req.files?.image ? req.files.image[0].path : undefined,
-        audioUrl: req.files?.audio ? req.files.audio[0].path : undefined,
+        // audioUrl: req.files?.audio ? req.files.audio[0].path : undefined,
         location,
         priority,
         deptName

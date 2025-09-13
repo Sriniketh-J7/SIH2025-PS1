@@ -27,7 +27,7 @@ export async function signup(req, res) {
 
 export async function loginDept(req, res) {
   try {
-    const { username: deptHeadName, password } = req.body;
+    const { deptHeadName, password } = req.body;
     const dept = await Department.findOne({ deptHeadName });
     if (!dept) {
       return res
@@ -52,7 +52,7 @@ export async function loginDept(req, res) {
     // Set the token in the Authorization header
     res.setHeader("Authorization", `Bearer ${token}`);
     res.setHeader("Access-Control-Expose-Headers", "Authorization");
-    res.json({
+    res.json({token,
       success: true,
       message: "Login successful",
       dept: {
