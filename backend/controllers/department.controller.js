@@ -209,11 +209,51 @@ export async function getAllTechnicians(req, res) {
   }
 }
 
+export async function taskAssigned(req, res) {
+  try {
+    const { reportId } = req.params;  
+    const { technicianId } = req.body;
+
+    // Check if technician exists
+    const technician = await Technician.findById(technicianId);
+    if (!technician) {
+      return res.status(404).json({ success: false, message: "Technician not found" });
+    }
+    
+     const report = await Report.findOne({ reportId });
+    if (!report) {
+      return res.status(404).json({ success: false, message: "Report not found" });
+    }
+    console.log(report);
+    
+   
+    
+    // update report
+    report.assignedTechId = technicianId;
+    report.status = "Assigned";
+    await report.save();
+
+    await report.populate("assignedTechId");
+    return res.json({
+      success: true,
+      message: "Technician assigned successfully",
+      report
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Couldn't assign technician",
+      error: error.message,
+    });
+  }
+}
+
+
 export async function newTech(req, res) {
   try {
-    const { userName, password } = req.body;
+    const { userName, password, email, phoneNo, currentReports, performance} = req.body;
     const deptName = req.department.deptName;
-    if (!userName || !password || !deptName) {
+    if (!userName || !password || !deptName || !email || !phoneNo) {
       return res
         .status(400)
         .json({ message: "Missing Fields", success: false });
@@ -230,6 +270,10 @@ export async function newTech(req, res) {
       userName,
       password: hashedPass,
       deptName,
+      email,
+      phoneNo,
+      currentReports,
+      performance
     });
     await newTechnician.save();
 
@@ -254,6 +298,7 @@ export async function newTech(req, res) {
     return res.status(500).json({ message: "Server error", success: false });
   }
 }
+
 
 
 export async function checkAuth(req, res) {

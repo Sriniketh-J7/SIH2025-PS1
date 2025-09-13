@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 
 export const logintech = async (req, res) => {
   const { userName, password } = req.body;
-  if (!userName || !password) {
+  if (!userName || !password ) {
     return res.status(400).json({
       message: !userName ? "Username required" : "Password required",
       success: false,
@@ -80,7 +80,7 @@ export const task = async (req, res) => {
         .status(403)
         .json({ message: "This task is not assigned to you", success: false });
     }
-    return res.json({ success: true, task: report });
+    return res.json({ success: true, report });
   } catch (error) {
     return res.status(403).json({ success: false, error: error.message });
   }
@@ -103,7 +103,7 @@ export const startTask = async (req, res) => {
     report.startedAt = new Date();
     await report.save();
 
-    res.json({ message: "Task marked as In Progress", task: report,success: true });
+    res.json({ message: "Task marked as In Progress", report,success: true });
   } catch (error) {
     console.error("Error starting task:", error);
     res.status(500).json({ message: "Server error",success: false });
@@ -137,10 +137,11 @@ export const resolveTask = async (req, res) => {
     res.json({
       success: true,
       message: "Task resolved successfully",
-      task: report,
+      report,
     });
   } catch (error) {
     console.error("Error resolving task:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+

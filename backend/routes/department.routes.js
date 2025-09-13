@@ -7,7 +7,8 @@ import {
   loginDept,
   newTech,
   checkAuth,
-  signup
+  signup,
+  taskAssigned
 } from "../controllers/department.controller.js";
 import { protectRoute } from "../middlewares/department.auth.js";
 
@@ -21,5 +22,5 @@ deptRouter.get("/createTechnician",protectRoute, newTech); //works
 deptRouter.patch("/assignTechnician/:reportId/:technicianId",protectRoute, assignTechnician); //works
 deptRouter.get("/allTechnicians", protectRoute, getAllTechnicians); //works
 deptRouter.get("/checkAuth", protectRoute, checkAuth); 
-
+deptRouter.post("/assignTechnician/:reportId/assign", protectRoute, taskAssigned)
 export default deptRouter;
