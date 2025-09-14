@@ -31,8 +31,8 @@ mongoose
 app.use("/api/user", userRoutes);
 app.use("/api/report", reportRoutes);
 app.use("/api/technician", technicianRoutes);
-// app.use("/reportAssign", assignTechnician)
 app.use("/api/department", deptRouter)
+// app.use("/reportAssign", assignTechnician)
 
 
 

@@ -1,7 +1,38 @@
 import { useState, useRef, useContext } from "react";
 import { Camera } from "lucide-react";
 import { UserContext } from "../contexts/UserContext";
-import { getCurrentLocation } from "../lib/Location";
+import axios from "axios";
+
+// Function to get current location + address using LocationIQ
+async function getCurrentLocation() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) return reject("Geolocation not supported");
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+
+        try {
+           const apiKey = "pk.3a86dbc9e018d8762ff765be4cd2cd18"; // Your real LocationIQ key
+           const url = `https://us1.locationiq.com/v1/reverse?key=${apiKey}&lat=${lat}&lon=${lon}&format=json`;
+          const { data } = await axios.get(url);
+          console.log(data);
+          
+          resolve({
+            latitude: lat,
+            longitude: lon,
+            address: data.display_name,
+          });
+        } catch (err) {
+          reject("Failed to fetch address");
+        }
+      },
+      (err) => reject(err.message),
+      { enableHighAccuracy: true, maximumAge: 0 }
+    );
+  });
+}
 
 export const UserNewReport = () => {
   const { newReport, setNewReport } = useContext(UserContext);
@@ -23,15 +54,21 @@ export const UserNewReport = () => {
       });
       videoRef.current.srcObject = stream;
       videoRef.current.play();
-    } catch (err) {
-      console.error("Back camera not found, fallback to default", err);
+    } catch {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       videoRef.current.srcObject = stream;
       videoRef.current.play();
     }
   };
 
-  // Capture photo and store blob
+  // Stop camera
+  const stopCamera = () => {
+    const stream = videoRef.current?.srcObject;
+    if (stream) stream.getTracks().forEach((t) => t.stop());
+    setCameraOpen(false);
+  };
+
+  // Capture photo + get location
   const capturePhoto = async () => {
     setProcessing(true);
 
@@ -46,20 +83,13 @@ export const UserNewReport = () => {
 
       setFile(blob);
       setPreview(URL.createObjectURL(blob));
-
-      // Store blob in context
       setNewReport((prev) => ({ ...prev, imageUrl: blob }));
 
-      // Get location
       try {
         const locationData = await getCurrentLocation();
         setNewReport((prev) => ({
           ...prev,
-          location: {
-            address: locationData.address,
-            latitude: locationData.latitude,
-            longitude: locationData.longitude,
-          },
+          location: locationData,
         }));
       } catch (err) {
         console.error("Error fetching location:", err);
@@ -69,13 +99,6 @@ export const UserNewReport = () => {
     }, "image/jpeg");
 
     stopCamera();
-  };
-
-  // Stop camera
-  const stopCamera = () => {
-    const stream = videoRef.current?.srcObject;
-    if (stream) stream.getTracks().forEach((t) => t.stop());
-    setCameraOpen(false);
   };
 
   return (
@@ -108,7 +131,8 @@ export const UserNewReport = () => {
 
       {/* Main */}
       <main className="p-4 sm:p-6">
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 flex flex-col items-center text-center space-y-4">
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200 flex flex-col items-center text-center space-y-4 p-6 w-full max-w-md">
+          {/* Upload prompt */}
           {!cameraOpen && !file && (
             <div className="text-center mb-6">
               <div className="flex justify-center mb-2">
@@ -124,6 +148,7 @@ export const UserNewReport = () => {
             </div>
           )}
 
+          {/* Start camera button */}
           {!cameraOpen && !preview && (
             <button
               onClick={startCamera}
@@ -133,11 +158,12 @@ export const UserNewReport = () => {
             </button>
           )}
 
+          {/* Camera preview */}
           {cameraOpen && (
             <div className="w-full space-y-3">
               <video
                 ref={videoRef}
-                className="w-full h-[69vh] object-cover"
+                className="w-full h-[60vh] object-cover rounded-lg"
               />
               <div className="flex justify-center gap-3">
                 <button
@@ -156,9 +182,17 @@ export const UserNewReport = () => {
             </div>
           )}
 
+          {/* Photo preview + confirm */}
           {preview && (
             <div className="w-full space-y-3">
               <img src={preview} alt="Preview" className="w-full rounded-md" />
+              {newReport?.location?.address && (
+                <p className="text-sm text-gray-700">
+                  📍 Location: {newReport.location.address} <br />
+                  Lat: {newReport.location.latitude}, Lon:{" "}
+                  {newReport.location.longitude}
+                </p>
+              )}
               <div className="flex justify-center gap-3">
                 <button
                   onClick={() => console.log("✅ Confirmed Report:", newReport)}
@@ -170,7 +204,11 @@ export const UserNewReport = () => {
                   onClick={() => {
                     setPreview(null);
                     setFile(null);
-                    setNewReport((prev) => ({ ...prev, imageUrl: null }));
+                    setNewReport((prev) => ({
+                      ...prev,
+                      imageUrl: null,
+                      location: null,
+                    }));
                     startCamera();
                   }}
                   className="bg-gray-300 px-4 py-2 rounded-lg"
