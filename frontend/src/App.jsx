@@ -10,7 +10,8 @@ import { UserHomePage } from './pages/UserHomePage'
 import {UserReportsPage} from './pages/UserReportsPage'
 import {UserNewReport} from './pages/UserNewReport'
 import {ReportNewIssue} from './pages/ReportNewIssue'
-import {ReportDetails} from './pages/UserReportDetail'
+import { ReportDetail } from "./pages/ReportDetail";
+import CameraCapture from './lib/Camera'
 
 
 
@@ -22,8 +23,10 @@ export default function App() {
       <Routes >
         <Route path='/' element={<SignUp/>}></Route>
         <Route path='/login' element = {<SignIn></SignIn>}></Route>
-        <Route path='/TechDashboard' element = {<TechDashboard></TechDashboard>}></Route>
 
+
+        <Route path='/TechDashboard' element = {<TechDashboard></TechDashboard>}></Route>
+        <Route path="/report/:reportId" element={<ReportDetail />} />
 
         <Route path='/DeptTechnicians' element = {<DeptTechnician></DeptTechnician>}></Route>
         <Route path='/DeptOverview' element = {<DeptDashboard></DeptDashboard>}></Route>
@@ -33,7 +36,6 @@ export default function App() {
         <Route path='/UserHomePage' element = {<UserHomePage></UserHomePage>}></Route>  
         <Route path='/UserReportsPage' element = {<UserReportsPage></UserReportsPage>}></Route>
         <Route path='/UserNewReport' element = {<UserNewReport></UserNewReport>}></Route>
-        <Route path='/UserReportDetail' element = {<ReportDetails></ReportDetails>}></Route>
         <Route path='/ReportNewIssue' element = {<ReportNewIssue></ReportNewIssue>}></Route>
 
 

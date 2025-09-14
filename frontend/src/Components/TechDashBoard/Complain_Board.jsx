@@ -1,8 +1,23 @@
 
+import { TechnicianContext } from "../../contexts/TechnicianContext"
 import { ComplainBox } from "./Complain_box"
-import {useState} from "react"
+import { useContext, useEffect, useState} from "react"
 
 export const ComplainBoard = () => {
+const {getTasks} = useContext(TechnicianContext)
+
+const [tasksList, setTasksList] = useState([])
+
+
+useEffect(()=>{
+    const fetchTasks = async () => {
+        const allTasks = await getTasks()
+        setTasksList(allTasks || [])
+    } 
+    fetchTasks()
+}, [])
+
+
 
     const [dashboardInfo, setDashboardInfo] = useState(
        [ {
@@ -40,10 +55,10 @@ export const ComplainBoard = () => {
 
     return (
         <div className="  grid grid-cols-1 sm:grid-cols-2 gap-12 bg-slate-100 p-3 mt-6 rounded-lg">
-            {dashboardInfo.map((info) => {
-               return (<ComplainBox {...info}></ComplainBox> )  
+            {tasksList.map((task) => {
+               return <ComplainBox key={task._id} {...task}></ComplainBox>;  
             })}
-        
+
         </div>
     )
 }

@@ -3,32 +3,85 @@ import generateToken from "../utils/generateToken.js";
 import Report from "../models/report.model.js";
 import bcrypt from "bcrypt";
 
+export const signup = async (req, res) => {
+  try{
+
+
+  const { userName, email, password, deptName } = req.body;
+
+  if (!userName || !password) {
+    return res.status(400).json({ message: "Missing Fields", success: false });
+  }
+
+  const existingUser = await Technician.findOne({ userName });
+
+  if (existingUser) {
+    return res.status(400).json({
+      message: "Username Already Exists, try another one",
+      success: false,
+    });
+  }
+
+  const hashedPass = await bcrypt.hash(password, 10);
+
+  const technician = new Technician({
+    userName,
+    email,
+    deptName,
+    password: hashedPass,
+  });
+  await technician.save();
+
+   const payload = {
+      id: technician._id,
+      role: "technician",
+    };
+    const token = generateToken(payload);
+  res
+    .status(201)
+    .json({ token, message: "Token Generated Successfully", success: true });
+  }
+  catch(error){
+    return res.send({success:false, error: error.message})
+  }
+};
 
 export const logintech = async (req, res) => {
   const { userName, password } = req.body;
-  if (!userName || !password ) {
-    return res.status(400).json({
-      message: !userName ? "Username required" : "Password required",
-      success: false,
-    });
+  try {
+    if (!userName || !password) {
+      return res.status(400).json({
+        message: !userName ? "Username required" : "Password required",
+        success: false,
+      });
+    }
+    const technician = await Technician.findOne({ userName });
+    if (!technician) {
+      return res
+        .status(400)
+        .json({ message: "Username not Found!", success: false });
+    }
+    const validPassword = await bcrypt.compare(password, technician.password);
+    if(!validPassword){
+      return res.send({success: false, message: "user credentials incorrect"})
+    }
+    const payload = {
+      id: technician._id,
+      role: "technician",
+    };
+    const token = generateToken(payload);
+
+    // Set the token in the Authorization header
+    res.setHeader("Authorization", `Bearer ${token}`);
+    res.setHeader("Access-Control-Expose-Headers", "Authorization");
+    return res
+      .status(201)
+      .json({ message: "Token Generated Successfully", success: true });
   }
-  const technician = await Technician.findOne({ userName });
-  if (!technician) {
-    return res.status(400).json({ message: "Username not Found!" , success: false});
+  catch (error) {
+    return res.send({success: false, error:message.error})
   }
-  const validPassword = await bcrypt.compare(password, technician.password);
-  if (!validPassword) {
-    return res.status(401).json({
-      message: "Invalid password",
-      success: false,
-    });
-  }
-  const payload = {
-    id: technician._id,
-    role: "technician",
-  };
-  const token = generateToken(payload);
-  res.status(201).json({token, message: "Token Generated Successfully", success: true});
+  
 };
 
 export const alltasks = async (req, res) => {
@@ -37,7 +90,7 @@ export const alltasks = async (req, res) => {
 
     //sort in ascending order 1 to 10, 10 highest priority
     const tasksAssigned = await Report.find({ assignedTechId })
-      .select("_id title imageUrl location status priority createdAt")
+      .select("_id reportId title imageUrl location status priority createdAt")
       .sort({ priority: 1 });
 
     const technician = await Technician.findById(assignedTechId);
@@ -59,7 +112,7 @@ export const alltasks = async (req, res) => {
   }
 };
 
-export const task = async (req, res) => {
+export const singletask = async (req, res) => {
   const { id } = req.params;
   try {
     const assignedTechId = req.technicianId;
@@ -99,7 +152,7 @@ export const startTask = async (req, res) => {
       return res.status(403).json({ message: "Not authorized for this task",success: false });
     }
 
-    report.status = "InProgress";
+    report.status = "In Progress";
     report.startedAt = new Date();
     await report.save();
 
@@ -125,11 +178,10 @@ export const resolveTask = async (req, res) => {
     }
     
     if (req.file) {
-      //uplaod iamge
-      report.resolvedImageUrl = req.file.path;
+      report.resolvedImageUrl = req?.file?.path || req.file.secure_url;
     }
     
-    report.status = "Completed";
+    report.status = "Resolved";
     report.resolvedTime = new Date();
 
     await report.save();
@@ -145,3 +197,6 @@ export const resolveTask = async (req, res) => {
   }
 };
 
+export async function checkAuth(req, res) {
+  return res.json({ success: true, techData: req.technician });
+}

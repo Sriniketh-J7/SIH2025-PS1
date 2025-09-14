@@ -52,7 +52,7 @@ export async function loginDept(req, res) {
     // Set the token in the Authorization header
     res.setHeader("Authorization", `Bearer ${token}`);
     res.setHeader("Access-Control-Expose-Headers", "Authorization");
-    res.json({token,
+    res.json({
       success: true,
       message: "Login successful",
       dept: {
@@ -79,7 +79,7 @@ export async function allReports(req, res) {
     }
     const reports = await Report.find({ deptName })
       .select(
-        "_id report_id title location status priority assignedTech createdAt"
+        "_id reportId title location status priority assignedTech createdAt"
       )
       .sort({ createdAt: 1 });
 
@@ -106,7 +106,7 @@ export async function SingleReport(req, res) {
       return res.json({ success: false, message: "report id to be provided" });
     }
 
-    const report = await Report.findById(id);
+    const report = await Report.findById(id).populate("userId");
     if (!report) {
       return res.json({ success: false, message: "report not found" });
     }

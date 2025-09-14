@@ -26,7 +26,7 @@ const reportSchema = new mongoose.Schema(
     deptName: { type: String, required: true },
     assignedTechId: { type: mongoose.Schema.Types.ObjectId, ref: "Technician" }, // linked technician
     startedAt: { type: Date, default: null },
-    resolvedTime: { type: Date, default: undefined },
+    resolvedTime: { type: Date, default: null },
     resolvedImageUrl: { type: String, default: undefined },
     feedback: { type: String, default: null },
   },
