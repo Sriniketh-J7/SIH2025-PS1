@@ -66,24 +66,7 @@ export const Card = () => {
           </div>
         );
       })}
-      <div className="fixed bottom-12    left-0 w-full flex justify-around items-center border-t py-3 ">
-        <div className="flex flex-col items-center text-blue-500">
-          <Home className="w-5 h-5" />
-          <span className="text-xs">Home</span>
-        </div>
-        <div className="flex flex-col items-center text-blue-500">
-          <MapPin className="w-5 h-5" />
-          <span className="text-xs">My Reports</span>
-        </div>
-        <div className="flex flex-col items-center text-gray-400">
-          <Globe className="w-5 h-5" />
-          <span className="text-xs">Explore</span>
-        </div>
-        <div className="flex flex-col items-center text-gray-400">
-          <User className="w-5 h-5" />
-          <span className="text-xs">Profile</span>
-        </div>
-      </div>
+      
     </div>
   );
 };

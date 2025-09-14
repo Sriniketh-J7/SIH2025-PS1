@@ -1,62 +1,157 @@
-
-import { Home, MapPin, Globe, User, Plus } from "lucide-react";
-
+import { useState, useRef } from "react";
+import { Home, MapPin, Globe, User, Plus, Camera } from "lucide-react";
 
 export const UserNewReport = () => {
-    return (
-        <div className="">
+  const [cameraOpen, setCameraOpen] = useState(false);
+  const [preview, setPreview] = useState(null);
+  const [file, setFile] = useState(null);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
 
-            <div className="mb-5">
-                <div className="bg-white shadow-lg w-full p-4 flex gap-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-                    </svg>
-                    <div>
+  // start camera
+  const startCamera = async () => {
+    setCameraOpen(true);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { exact: "environment" } },
+      });
+      videoRef.current.srcObject = stream;
+      videoRef.current.play();
+    } catch (err) {
+      console.error("Back camera not found, fallback to default", err);
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      videoRef.current.srcObject = stream;
+      videoRef.current.play();
+    }
+  };
 
-                        <h2 className="text-2xl font-bold">Report New Issue </h2>
-                        <p className="text-gray-400">Step 1 of 3</p>
-                    </div>
-                </div>
+  // capture
+  const capturePhoto = () => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext("2d").drawImage(video, 0, 0);
+
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      setFile(blob);
+      setPreview(URL.createObjectURL(blob));
+    }, "image/jpeg");
+
+    stopCamera();
+  };
+
+  // stop camera
+  const stopCamera = () => {
+    const stream = videoRef.current?.srcObject;
+    if (stream) stream.getTracks().forEach((t) => t.stop());
+    setCameraOpen(false);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 font-sans">
+      {/* Header */}
+      <header className="bg-white shadow-sm p-4 flex items-center gap-3 border-b border-gray-200">
+        <button className="text-gray-600 hover:text-gray-900 transition-colors duration-200">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="2.0"
+            stroke="currentColor"
+            className="size-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+            />
+          </svg>
+        </button>
+        <div>
+          <h1 className="text-lg font-semibold text-gray-800">
+            Report New Issue
+          </h1>
+          <p className="text-sm text-gray-500">Step 1 of 3</p>
+        </div>
+      </header>
+
+      {/* Main */}
+      <main className="p-4 sm:p-6">
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 flex flex-col items-center text-center space-y-4">
+          {!cameraOpen && (
+            <div className="text-center mb-6">
+              <div className="flex justify-center mb-2">
+                <Camera size={48} className="text-blue-500" />
+              </div>
+              <h2 className="text-xl font-semibold text-gray-700">
+                Upload a Photo
+              </h2>
+              <p className="text-gray-500 text-sm">
+                Take a photo or select one from your gallery to document the
+                issue.
+              </p>
             </div>
-            <div className="mt-41 shadow-lg rounded-lg border border-2 border-gray-300 mx-3">
-                <div className="p-4 text-y-4   text-center">
-                    <div  className="flex justify-center size-22 w-full">
+          )}
 
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6" className="text-blue-400">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
-                        </svg>
-                    </div>
+          {/* camera / preview section */}
+          {!cameraOpen && !preview && (
+            <button
+              onClick={startCamera}
+              className="w-full py-3 px-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700"
+            >
+              Take Photo
+            </button>
+          )}
 
-                    <h1>Upload Photo</h1>
-                    <p className="text-gray-400">Take a photo or select from your gallery to document the issue </p>
-                    <button className="p-4 bg-blue-400 text-white text-center rounded-lg mt-4 w-full">Take photo / Select Image </button>
-                </div>
+          {cameraOpen && (
+            <div className="w-full space-y-3">
+              <video ref={videoRef} className="w-full h-[60vh] object-cover" />
+              <div className="flex justify-center gap-3">
+                <button
+                  onClick={capturePhoto}
+                  className="bg-green-500 text-white px-4 py-2 rounded-lg"
+                >
+                  Capture
+                </button>
+                <button
+                  onClick={stopCamera}
+                  className="bg-red-500 text-white px-4 py-2 rounded-lg"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
+          )}
 
+          {preview && (
+            <div className="w-full space-y-3">
+              <img src={preview} alt="Preview" className="w-full rounded-md" />
+              <div className="flex justify-center gap-3">
+                <button
+                  onClick={() => alert("Submit logic here")}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+                >
+                  Submit
+                </button>
+                <button
+                  onClick={() => {
+                    setPreview(null);
+                    setFile(null);
+                    startCamera();
+                  }}
+                  className="bg-gray-300 px-4 py-2 rounded-lg"
+                >
+                  Retake
+                </button>
+              </div>
+            </div>
+          )}
 
-            <div className="fixed bottom-12    left-0 w-full flex justify-around items-center border-t py-3 ">
-        <div className="flex flex-col items-center text-blue-500">
-          <Home className="w-5 h-5" />
-          <span className="text-xs">Home</span>
+          <canvas ref={canvasRef} style={{ display: "none" }} />
         </div>
-        <div className="flex flex-col items-center text-blue-500">
-          <MapPin className="w-5 h-5" />
-          <span className="text-xs">My Reports</span>
-        </div>
-        <div className="flex flex-col items-center text-gray-400">
-          <Globe className="w-5 h-5" />
-          <span className="text-xs">Explore</span>
-        </div>
-        <div className="flex flex-col items-center text-gray-400">
-          <User className="w-5 h-5" />
-          <span className="text-xs">Profile</span>
-        </div>
-      </div>
-
-
-        </div>
-    )
-}
-
-
+      </main>
+    </div>
+  );
+};
