@@ -1,14 +1,20 @@
-import { useState, useRef } from "react";
-import { Home, MapPin, Globe, User, Plus, Camera } from "lucide-react";
+import { useState, useRef, useContext } from "react";
+import { Camera } from "lucide-react";
+import { UserContext } from "../contexts/UserContext";
+import { getCurrentLocation } from "../lib/Location";
 
 export const UserNewReport = () => {
+  const { newReport, setNewReport } = useContext(UserContext);
+
   const [cameraOpen, setCameraOpen] = useState(false);
   const [preview, setPreview] = useState(null);
   const [file, setFile] = useState(null);
+  const [processing, setProcessing] = useState(false);
+
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
-  // start camera
+  // Start camera
   const startCamera = async () => {
     setCameraOpen(true);
     try {
@@ -25,24 +31,47 @@ export const UserNewReport = () => {
     }
   };
 
-  // capture
-  const capturePhoto = () => {
+  // Capture photo and store blob
+  const capturePhoto = async () => {
+    setProcessing(true);
+
     const video = videoRef.current;
     const canvas = canvasRef.current;
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     canvas.getContext("2d").drawImage(video, 0, 0);
 
-    canvas.toBlob((blob) => {
+    canvas.toBlob(async (blob) => {
       if (!blob) return;
+
       setFile(blob);
       setPreview(URL.createObjectURL(blob));
+
+      // Store blob in context
+      setNewReport((prev) => ({ ...prev, imageUrl: blob }));
+
+      // Get location
+      try {
+        const locationData = await getCurrentLocation();
+        setNewReport((prev) => ({
+          ...prev,
+          location: {
+            address: locationData.address,
+            latitude: locationData.latitude,
+            longitude: locationData.longitude,
+          },
+        }));
+      } catch (err) {
+        console.error("Error fetching location:", err);
+      }
+
+      setProcessing(false);
     }, "image/jpeg");
 
     stopCamera();
   };
 
-  // stop camera
+  // Stop camera
   const stopCamera = () => {
     const stream = videoRef.current?.srcObject;
     if (stream) stream.getTracks().forEach((t) => t.stop());
@@ -79,8 +108,8 @@ export const UserNewReport = () => {
 
       {/* Main */}
       <main className="p-4 sm:p-6">
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 flex flex-col items-center text-center space-y-4">
-          {!cameraOpen && (
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200 flex flex-col items-center text-center space-y-4">
+          {!cameraOpen && !file && (
             <div className="text-center mb-6">
               <div className="flex justify-center mb-2">
                 <Camera size={48} className="text-blue-500" />
@@ -95,25 +124,27 @@ export const UserNewReport = () => {
             </div>
           )}
 
-          {/* camera / preview section */}
           {!cameraOpen && !preview && (
             <button
               onClick={startCamera}
               className="w-full py-3 px-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700"
             >
-              Take Photo
+              {processing ? "Processing..." : "Take Photo"}
             </button>
           )}
 
           {cameraOpen && (
             <div className="w-full space-y-3">
-              <video ref={videoRef} className="w-full h-[60vh] object-cover" />
+              <video
+                ref={videoRef}
+                className="w-full h-[69vh] object-cover"
+              />
               <div className="flex justify-center gap-3">
                 <button
                   onClick={capturePhoto}
                   className="bg-green-500 text-white px-4 py-2 rounded-lg"
                 >
-                  Capture
+                  {processing ? "Processing..." : "Capture"}
                 </button>
                 <button
                   onClick={stopCamera}
@@ -130,15 +161,16 @@ export const UserNewReport = () => {
               <img src={preview} alt="Preview" className="w-full rounded-md" />
               <div className="flex justify-center gap-3">
                 <button
-                  onClick={() => alert("Submit logic here")}
+                  onClick={() => console.log("✅ Confirmed Report:", newReport)}
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg"
                 >
-                  Submit
+                  Confirm
                 </button>
                 <button
                   onClick={() => {
                     setPreview(null);
                     setFile(null);
+                    setNewReport((prev) => ({ ...prev, imageUrl: null }));
                     startCamera();
                   }}
                   className="bg-gray-300 px-4 py-2 rounded-lg"

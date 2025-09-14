@@ -4,7 +4,7 @@ const backendUrl = "http://localhost:5000";
 axios.defaults.baseURL = backendUrl;
 
 // Sign up a new technician
-export async function signUp(username, password) {
+export async function signup(username, password) {
   try {
     const response = await axios.post("/api/technician/signup", {
       username,

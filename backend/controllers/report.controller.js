@@ -38,11 +38,16 @@ export const createReport = async (req, res) => {
 export const allReports = async(req, res) =>{
    try {
     const userId = req.user._id; // from JWT auth middleware
-
+if(!userId){
+  return res.json({ success: false, message: "user not authenticated" });
+}
     // Find all reports for this user
-    const reportDetails = await Report.find({ userId }).select("_id title location status priority createdAt").sort({ createdAt: -1 });
-    
-    res.json({ success: true,  reportDetails });
+    const reportDetails = await Report.find({ userId }).select("_id reportId title location status priority createdAt").sort({ createdAt: -1 });
+    if(!reportDetails){
+      return res.json({success:false, message: "no reports"})
+    }
+
+    return res.json({ success: true,  reportDetails });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Something went wrong" ,success: false});
@@ -52,18 +57,26 @@ export const allReports = async(req, res) =>{
 
 export const singleReport = async(req, res)=> {
   const id = req.params.id;
+  const userId = req.user._id; // from JWT auth middleware
   try {
-    if(!id){
-      return res.status(400).json({ success: false, message: "Provide report id properly" });
+    if (!id) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Provide report id properly" });
     }
-    const report = await Report.findById(id)
-    if(!report){
-       return res.status(404).json({ success: false, message: "Report not found" });
+    if (!userId) {
+      return res.json({ success: false, message: "user not authenticated" });
     }
-    return res.json({success: true, report, message: "report found"})
-  } 
-  catch (error) {
-    res.status(500).json({ error: error.message ,success: false});
+
+    const report = await Report.findById(id);
+    if (!report) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Report not found" });
+    }
+    return res.json({ success: true, report, message: "report found" });
+  } catch (error) {
+    res.status(500).json({ error: error.message, success: false });
   }
 }
 

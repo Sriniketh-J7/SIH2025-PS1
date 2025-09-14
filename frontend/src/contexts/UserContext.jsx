@@ -13,7 +13,7 @@ export const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   const [userData, setUserData] = useState({});
   const [loading, setLoading] = useState(true);
-
+  const [newReport, setNewReport] = useState({})
 
     const signup = async (username, password) => {
       const success = await signUpApi(username, password);
@@ -73,6 +73,8 @@ export const UserProvider = ({ children }) => {
       value={{
         userData,
         loading,
+        newReport,
+        setNewReport,
         setUserData,
         setLoading,
         login,

@@ -36,6 +36,9 @@ export const signup = async (req, res) => {
 };
 
 export const login = async (req, res) => {
+  try{
+
+  
   const { userName, password } = req.body;
 
   if (!userName || !password) {
@@ -48,7 +51,9 @@ export const login = async (req, res) => {
   const user = await User.findOne({ userName });
 
   if (!user) {
-    return res.status(400).json({ message: "Username not Found!" , success: false});
+    return res
+      .status(400)
+      .json({ message: "Username not Found!", success: false });
   }
 
   const validPassword = await bcrypt.compare(password, user.password);
@@ -59,6 +64,23 @@ export const login = async (req, res) => {
     });
   }
   const token = generateToken({ _id: user._id, userName: user.userName });
-    res.status(201).json({token, message: "Token Generated Successfully", success: true});
+  // Set the token in the Authorization header
+  res.setHeader("Authorization", `Bearer ${token}`);
+  res.setHeader("Access-Control-Expose-Headers", "Authorization");
+  
+  return res.status(201).json({ token, message: "Token Generated Successfully", success: true });
+}
+catch(error){
+  return res.send({success:false, error:message.error})
+}
 };
 
+export async function checkAuth(req, res) {
+  const userData = await User.findById(req._id)
+  if(!userData){
+    return res.send({success: false, message: "user data not available"})
+  }
+  req.userData = userData
+  
+  return res.json({ success: true, userData });
+}
