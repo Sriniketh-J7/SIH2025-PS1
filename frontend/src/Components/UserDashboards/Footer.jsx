@@ -8,7 +8,7 @@ export const FooterNav = () => {
   return (
     <div className="fixed bottom-3 left-0 w-full flex justify-around items-center border-t py-3 bg-white">
       <NavLink
-        to="/UserHomePage"
+        to="/"
         className={({ isActive }) =>
           `${linkClass} ${isActive ? "text-blue-500" : "text-gray-400"}`
         }
@@ -18,7 +18,7 @@ export const FooterNav = () => {
       </NavLink>
 
       <NavLink
-        to="/UserReportsPage"
+        to="/userReportsPage"
         className={({ isActive }) =>
           `${linkClass} ${isActive ? "text-blue-500" : "text-gray-400"}`
         }
@@ -28,13 +28,13 @@ export const FooterNav = () => {
       </NavLink>
 
       <NavLink
-        to="/userNewReport"
+        to="/reportIssue"
         className={({ isActive }) =>
           `${linkClass} ${isActive ? "text-blue-500" : "text-gray-400"}`
         }
       >
         <Globe className="w-5 h-5" />
-        <span>Explore</span>
+        <span>Report</span>
       </NavLink>
 
       <NavLink

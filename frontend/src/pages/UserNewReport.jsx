@@ -1,7 +1,9 @@
-import { useState, useRef, useContext } from "react";
+import { useState, useRef, useContext, useEffect } from "react";
 import { Camera } from "lucide-react";
 import { UserContext } from "../contexts/UserContext";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { ClassifyImage } from "../lib/ImageClassify";
 
 // Function to get current location + address using LocationIQ
 async function getCurrentLocation() {
@@ -14,15 +16,21 @@ async function getCurrentLocation() {
         const lon = pos.coords.longitude;
 
         try {
-           const apiKey = "pk.3a86dbc9e018d8762ff765be4cd2cd18"; // Your real LocationIQ key
-           const url = `https://us1.locationiq.com/v1/reverse?key=${apiKey}&lat=${lat}&lon=${lon}&format=json`;
+          const apiKey = "pk.3a86dbc9e018d8762ff765be4cd2cd18"; // Your real key
+          const url = `https://us1.locationiq.com/v1/reverse?key=${apiKey}&lat=${lat}&lon=${lon}&format=json`;
           const { data } = await axios.get(url);
-          console.log(data);
-          
+
+          let address = data.display_name || "";
+          if (address.includes(",")) {
+            address = address.split(" ").slice(0, 5).join(" ");
+          } else {
+            address = address.split(" ").slice(0, 4).join(" ");
+          }
+
           resolve({
             latitude: lat,
             longitude: lon,
-            address: data.display_name,
+            address,
           });
         } catch (err) {
           reject("Failed to fetch address");
@@ -36,7 +44,7 @@ async function getCurrentLocation() {
 
 export const UserNewReport = () => {
   const { newReport, setNewReport } = useContext(UserContext);
-
+  const navigate = useNavigate();
   const [cameraOpen, setCameraOpen] = useState(false);
   const [preview, setPreview] = useState(null);
   const [file, setFile] = useState(null);
@@ -44,6 +52,10 @@ export const UserNewReport = () => {
 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+
+  useEffect(() => {
+    console.log("changed: ", newReport);
+  }, [newReport]);
 
   // Start camera
   const startCamera = async () => {
@@ -83,16 +95,26 @@ export const UserNewReport = () => {
 
       setFile(blob);
       setPreview(URL.createObjectURL(blob));
-      setNewReport((prev) => ({ ...prev, imageUrl: blob }));
 
       try {
         const locationData = await getCurrentLocation();
+        let category; // declare outside
+        // directly send blob to categorizeIssue
+        try {
+          category = await ClassifyImage(blob);
+        } catch (err) {
+          console.error("Classification failed:", err);
+          alert("The model is busy. Please try uploading the image again.");
+        }
+        console.log("Predicted category:", category);
         setNewReport((prev) => ({
           ...prev,
+          imageUrl: blob,
           location: locationData,
+          title: category,
         }));
       } catch (err) {
-        console.error("Error fetching location:", err);
+        console.error("Error fetching location or categorizing:", err);
       }
 
       setProcessing(false);
@@ -125,16 +147,16 @@ export const UserNewReport = () => {
           <h1 className="text-lg font-semibold text-gray-800">
             Report New Issue
           </h1>
-          <p className="text-sm text-gray-500">Step 1 of 3</p>
+          <p className="text-sm text-gray-500">Step 1 of 2</p>
         </div>
       </header>
 
       {/* Main */}
       <main className="p-4 sm:p-6">
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 flex flex-col items-center text-center space-y-4 p-6 w-full max-w-md">
+        <div className="bg-bl rounded-xl shadow-lg border border-gray-200 flex flex-col items-center text-center space-y-4 w-full max-w-md">
           {/* Upload prompt */}
           {!cameraOpen && !file && (
-            <div className="text-center mb-6">
+            <div className="text-center mb-6 p-6">
               <div className="flex justify-center mb-2">
                 <Camera size={48} className="text-blue-500" />
               </div>
@@ -150,12 +172,14 @@ export const UserNewReport = () => {
 
           {/* Start camera button */}
           {!cameraOpen && !preview && (
-            <button
-              onClick={startCamera}
-              className="w-full py-3 px-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700"
-            >
-              {processing ? "Processing..." : "Take Photo"}
-            </button>
+            <div className="w-full px-2">
+              <button
+                onClick={startCamera}
+                className="w-full py-3 px-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700"
+              >
+                {processing ? "Processing..." : "Take Photo"}
+              </button>
+            </div>
           )}
 
           {/* Camera preview */}
@@ -163,7 +187,7 @@ export const UserNewReport = () => {
             <div className="w-full space-y-3">
               <video
                 ref={videoRef}
-                className="w-full h-[60vh] object-cover rounded-lg"
+                className="w-full h-[67vh] object-cover rounded-lg"
               />
               <div className="flex justify-center gap-3">
                 <button
@@ -195,7 +219,7 @@ export const UserNewReport = () => {
               )}
               <div className="flex justify-center gap-3">
                 <button
-                  onClick={() => console.log("✅ Confirmed Report:", newReport)}
+                  onClick={() => navigate("/Form2")}
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg"
                 >
                   Confirm

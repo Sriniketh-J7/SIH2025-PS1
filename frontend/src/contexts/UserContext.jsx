@@ -58,7 +58,10 @@ export const UserProvider = ({ children }) => {
 
   const createReport = async () => {
     setLoading(true);
-    const data = await createReportApi(id);
+    const data = await createReportApi(newReport);
+    if(!data){
+      throw new Error("cant call")
+    }
     setLoading(false);
     return data;
   };

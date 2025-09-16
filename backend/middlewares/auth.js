@@ -2,6 +2,8 @@ import jwt from "jsonwebtoken";
 
 const auth = (req, res, next) => {
   try {
+    console.log(req.headers.authorization);
+    
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer")) {
@@ -13,6 +15,8 @@ const auth = (req, res, next) => {
     const token = authHeader.split(" ")[1];
 
     const decodedUser = jwt.verify(token, process.env.JWT_KEY);
+    console.log(decodedUser);
+    
     req.user = decodedUser;
     
     next();

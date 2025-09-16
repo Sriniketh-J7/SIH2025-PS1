@@ -1,16 +1,21 @@
 import Report from "../models/report.model.js";
+import { getDepartmentAndPriority } from "../utils/Priority.js";
 
 //rpt-001,rpt-002,etc
 export const createReport = async (req, res) => {
    try {
-      const { title, description, priority, deptName, location } = req.body;
+      const { title, description } = req.body;
       const userId = req.user._id;
 
+      const location = typeof req.body.location === "string" ? JSON.parse(req.body.location) : req.body.location;
 
-       const reportCount = await Report.countDocuments({ deptName });
+
+      const reportCount = await Report.countDocuments({ deptName });
 
     // Create new reportId (pad with leading zeros)
     const newReportId = `RPT-${String(reportCount + 1).padStart(3, "0")}`;
+
+    const { priority, deptName } = getDepartmentAndPriority(title);
 
 
       const newReport = new Report({
@@ -19,10 +24,10 @@ export const createReport = async (req, res) => {
         title,
         description,
         imageUrl: req.files?.image ? req.files.image[0].path : undefined,
-        // audioUrl: req.files?.audio ? req.files.audio[0].path : undefined,
         location,
         priority,
         deptName
+        // audioUrl: req.files?.audio ? req.files.audio[0].path : undefined,
       });
 
       await newReport.save();

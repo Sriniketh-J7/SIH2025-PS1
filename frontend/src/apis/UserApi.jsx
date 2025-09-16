@@ -6,7 +6,7 @@ axios.defaults.baseURL = backendUrl;
 // Sign up a new technician
 export async function signup(username, password) {
   try {
-    const response = await axios.post("/api/technician/signup", {
+    const response = await axios.post("/api/user/signup", {
       username,
       password,
     });
@@ -28,7 +28,7 @@ export async function signup(username, password) {
 // Login
 export async function login(username, password) {
   try {
-    const response = await axios.post("/api/technician/login", {
+    const response = await axios.post("/api/user/login", {
       username,
       password,
     });
@@ -81,29 +81,44 @@ export async function singleReport(id) {
   }
 }
 
-// Create a new report with a photo
-export async function createReport(id, photo) {
+
+export async function createReport(report) {
   try {
-    if (!id || !photo) throw new Error("id and photo must be provided");
+    if(!report.title) report.title="no model"
+    if (!report) throw new Error("Report object must be provided");
+    if (!report.title || !report.imageUrl || !report.location) throw new Error("all details to be provided");
 
     const token = localStorage.getItem("userAuth");
     if (!token) return checkAuth();
 
     const formData = new FormData();
-    formData.append("photo", photo);
-    formData.append("id", id);
 
-    const { data } = await axios.put("/api/report/create", formData, {
+    // Append image if exists
+    if (report.imageUrl) {
+      formData.append("image", report.imageUrl); // File / Blob
+    }
+console.log(report.location);
+
+    // Append other fields
+    formData.append("id", report.id || ""); // include user id or report id
+    formData.append("title", report.title || "");
+    formData.append("description", report.description || "");
+    formData.append("location", JSON.stringify(report.location) || "");
+
+    const { data } = await axios.post("/api/report/create", formData, {
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data",
+        "Content-Type": "multipart/form-data", // optional, browser handles it automatically
       },
     });
+
+    console.log("createReport response:", data);
 
     if (data.success) return { message: data.message, report: data.report };
     throw new Error(data.error || "Failed to create report");
   } catch (error) {
     console.error("createReport Error:", error.message);
+    throw error; // re-throw to handle in caller
   }
 }
 
@@ -116,6 +131,7 @@ export async function checkAuth() {
     const { data } = await axios.get("/api/report/checkAuth", {
       headers: { Authorization: `Bearer ${token}` },
     });
+console.log(data);
 
     if (data.success) return data.userData;
     throw new Error(data.error || "Authentication check failed");

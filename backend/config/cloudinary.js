@@ -40,8 +40,7 @@ const technicianStorage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: "technician_uploads",
-    resource_type: "image",
-    allowed_formats: ["jpg", "jpeg", "png"], //need to add more types of files
+    resource_type: "image"
   },
 });
 

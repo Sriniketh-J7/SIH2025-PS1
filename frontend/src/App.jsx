@@ -9,10 +9,9 @@ import { DeptReports } from './pages/DeptReports'
 import { UserHomePage } from './pages/UserHomePage'
 import {UserReportsPage} from './pages/UserReportsPage'
 import {UserNewReport} from './pages/UserNewReport'
-import {ReportNewIssue} from './pages/ReportNewIssue'
+import { FormTwo } from "./pages/FormTwo";
 import { ReportDetail } from "./pages/ReportDetail";
 import Profile from "./Components/UserDashboards/Profile" ;
-import CameraCapture from './lib/Camera'
 import Test from "./pages/Test"
 import { UserLayout } from './pages/UserLayout'
 
@@ -48,18 +47,13 @@ export default function App() {
 
           {/* User routes wrapped with footer */}
           <Route element={<UserLayout />}>
-            <Route path="/UserHomePage" element={<UserHomePage />} />
-            <Route path="/UserReportsPage" element={<UserReportsPage />} />
-            <Route path="/userNewReport" element={<UserNewReport />} />
-            <Route path="/ReportNewIssue" element={<ReportNewIssue />} />
+            <Route path="/" element={<UserHomePage />} />
+            <Route path="/userReportsPage" element={<UserReportsPage />} />
+            <Route path="/reportIssue" element={<UserNewReport />} />
+            <Route path="/form2" element={<FormTwo />} />
             <Route path="/profile" element={<Profile />} />
+            {/* <Route path="/" element={<TestImageClassify />} /> */}
           </Route>
-
-          {/* <Route path='/test' element = {<Test></Test>}></Route>  
-        <Route path='/UserHomePage' element = {<UserHomePage></UserHomePage>}></Route>  
-        <Route path='/UserReportsPage' element = {<UserReportsPage></UserReportsPage>}></Route>
-        <Route path='/' element = {<UserNewReport></UserNewReport>}></Route>
-        <Route path='/ReportNewIssue' element = {<ReportNewIssue></ReportNewIssue>}></Route> */}
         </Routes>
       </BrowserRouter>
     </>

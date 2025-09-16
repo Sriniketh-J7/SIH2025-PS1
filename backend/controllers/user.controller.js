@@ -76,7 +76,7 @@ catch(error){
 };
 
 export async function checkAuth(req, res) {
-  const userData = await User.findById(req._id)
+  const userData = await User.findById(req.user._id)
   if(!userData){
     return res.send({success: false, message: "user data not available"})
   }

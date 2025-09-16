@@ -4,7 +4,7 @@ const departmentSchema = mongoose.Schema(
   {
     deptName: {
       type: String,
-      enum: ["water", "electrical", "animal-control", "road", "waste", "Street Lights"], // add more
+      enum: ["Water", "Electrical", "Animal Control", "Civil", "Sanitation"], // add more
       required: true,
     },
     deptHeadName: { type: String, required: true },
