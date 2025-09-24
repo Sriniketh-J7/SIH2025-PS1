@@ -5,7 +5,7 @@ export const Card = () => {
         <div className="rounded-none  mt-8 ">
           <div className="p-5">
             <img
-              src="https://picsum.photos/200"
+              src="/hero-civic.jpg"
               alt="Community"
               className="w-full h-48 object-cover"
             />

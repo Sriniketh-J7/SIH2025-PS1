@@ -5,41 +5,44 @@ import bcrypt from "bcrypt";
 
 export const signup = async (req, res) => {
   try{
+    const { userName, email, password, deptName } = req.body;
 
+    if (!userName || !password) {
+      return res
+        .status(400)
+        .json({ message: "Missing Fields", success: false });
+    }
 
-  const { userName, email, password, deptName } = req.body;
+    const existingUser = await Technician.findOne({ userName });
 
-  if (!userName || !password) {
-    return res.status(400).json({ message: "Missing Fields", success: false });
-  }
+    if (existingUser) {
+      return res.status(400).json({
+        message: "Username Already Exists, try another one",
+        success: false,
+      });
+    }
 
-  const existingUser = await Technician.findOne({ userName });
+    const hashedPass = await bcrypt.hash(password, 10);
 
-  if (existingUser) {
-    return res.status(400).json({
-      message: "Username Already Exists, try another one",
-      success: false,
+    const technician = new Technician({
+      userName,
+      email,
+      deptName,
+      password: hashedPass,
     });
-  }
+    await technician.save();
 
-  const hashedPass = await bcrypt.hash(password, 10);
-
-  const technician = new Technician({
-    userName,
-    email,
-    deptName,
-    password: hashedPass,
-  });
-  await technician.save();
-
-   const payload = {
+    const payload = {
       id: technician._id,
       role: "technician",
     };
     const token = generateToken(payload);
-  res
-    .status(201)
-    .json({ token, message: "Token Generated Successfully", success: true });
+    // Set the token in the Authorization header
+    res.setHeader("Authorization", `Bearer ${token}`);
+    res.setHeader("Access-Control-Expose-Headers", "Authorization");
+    res
+      .status(201)
+      .json({  message: "Token Generated Successfully", success: true });
   }
   catch(error){
     return res.send({success:false, error: error.message})
@@ -89,21 +92,26 @@ export const alltasks = async (req, res) => {
     const assignedTechId = req.technicianId;
 
     //sort in ascending order 1 to 10, 10 highest priority
-    const tasksAssigned = await Report.find({ assignedTechId })
-      .select("_id reportId title imageUrl location status priority createdAt")
-      .sort({ priority: 1 });
+    const tasksAssigned = await Report.find({ assignedTechId }).select(
+      "_id reportId title imageUrl location status priority createdAt"
+    );
 
     const technician = await Technician.findById(assignedTechId);
-
     if (!technician) {
       return res
         .status(404)
         .json({ message: "Technician not found", success: false });
     }
 
+    // Map priority strings to numbers for sorting
+    const priorityMap = { Low: 1, Medium: 2, High: 3 };
+    const sortedTasks = tasksAssigned.sort(
+      (a, b) => priorityMap[a.priority] - priorityMap[b.priority]
+    );
+
     res.json({
       technician: technician.userName,
-      tasksAssigned,
+      tasksAssigned: sortedTasks,
       success: true,
     });
   } catch (error) {
@@ -171,16 +179,26 @@ export const resolveTask = async (req, res) => {
   try {
     const report = await Report.findById(id);
 
-    if (!report) return res.status(404).json({ message: "Task not found" ,success: false});
+    if (!report)
+      return res
+        .status(404)
+        .json({ message: "Task not found", success: false });
 
     if (report.assignedTechId?.toString() !== req.technicianId.toString()) {
-      return res.status(403).json({ message: "Not authorized for this task" ,success: false});
+      return res
+        .status(403)
+        .json({ message: "Not authorized for this task", success: false });
     }
-    
-    if (req.file) {
-      report.resolvedImageUrl = req?.file?.path || req.file.secure_url;
+
+    // Check if image is sent
+    if (!req.file) {
+      return res
+        .status(400)
+        .json({ message: "Resolved image is required", success: false });
     }
-    
+
+    // Save resolved image
+    report.resolvedImageUrl = req.file.path || req.file.secure_url;
     report.status = "Resolved";
     report.resolvedTime = new Date();
 

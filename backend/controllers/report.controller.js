@@ -10,12 +10,14 @@ export const createReport = async (req, res) => {
       const location = typeof req.body.location === "string" ? JSON.parse(req.body.location) : req.body.location;
 
 
+    const { priority, deptName } = getDepartmentAndPriority(title);
+    console.log(deptName);
+    
       const reportCount = await Report.countDocuments({ deptName });
 
     // Create new reportId (pad with leading zeros)
     const newReportId = `RPT-${String(reportCount + 1).padStart(3, "0")}`;
 
-    const { priority, deptName } = getDepartmentAndPriority(title);
 
 
       const newReport = new Report({
@@ -48,6 +50,7 @@ if(!userId){
 }
     // Find all reports for this user
     const reportDetails = await Report.find({ userId }).select("_id reportId title location status priority createdAt").sort({ createdAt: -1 });
+    
     if(!reportDetails){
       return res.json({success:false, message: "no reports"})
     }

@@ -34,6 +34,7 @@ export const UserProvider = ({ children }) => {
   const checkAuth = async () => {
     const data = await checkAuthApi();
     setUserData(data || null);
+    setUserData({...data, role: "citizen"})
     setLoading(false);
   };
 

@@ -10,5 +10,5 @@ import { checkAuth } from "../controllers/user.controller.js";
 router.post("/create",auth, uploadreport, createReport); //need to check
 router.get("/myReports", auth, allReports) //works
 router.get("/singleReport/:id", auth, singleReport) //works
-router.get("/checkAuth", auth, checkAuth)
+
 export default router;

@@ -5,11 +5,11 @@ import { uploadTechnician } from "../config/cloudinary.js";
 const router = express.Router()
 
 router.post("/signup", signup)
-router.post("/login",  logintech) //works //
-router.get("/alltasks", authTechnician, alltasks) //works //getalltasks
-router.get("/task/:id", authTechnician, singletask); //works //singletask
+router.post("/login",  logintech) //works 
+router.get("/alltasks", authTechnician, alltasks) //works 
+router.get("/task/:id", authTechnician, singletask); //works 
 router.patch("/task/:id/start", authTechnician, startTask) //works 
 router.patch("/task/:id/resolve", authTechnician, uploadTechnician.single("photo"), resolveTask) //works
-router.get("/checkAuth",authTechnician, checkAuth)
+router.get("/checkAuth",authTechnician, checkAuth) //works
 
 export default router;

@@ -8,7 +8,7 @@ export const Header = ( {name,Role, subRole}) => {
                 src="https://api.dicebear.com/9.x/initials/svg?seed=Adrian&backgroundColor=94A3B8"
                 alt="avatar" className="size-15 rounded-full"/>
                 <div className="text-black ">
-                    <div  className="text-lg">{name}</div>
+                    <div className="text-lg">{name}</div>
                     <div className="text-gray-700 text-sm">{Role}</div>
                     <div className="text-gray-700  text-sm">{subRole}</div>
                 </div>

@@ -32,13 +32,16 @@ export const signup = async (req, res) => {
     _id: newUser._id,
     userName: newUser.userName,
   });
-  res.status(201).json({token, message: "Token Generated Successfully", success: true});
+  // Set the token in the Authorization header
+  res.setHeader("Authorization", `Bearer ${token}`);
+  res.setHeader("Access-Control-Expose-Headers", "Authorization");
+  return res
+    .status(201)
+    .json({ message: "Token Generated Successfully", success: true });
 };
 
 export const login = async (req, res) => {
   try{
-
-  
   const { userName, password } = req.body;
 
   if (!userName || !password) {
@@ -68,7 +71,7 @@ export const login = async (req, res) => {
   res.setHeader("Authorization", `Bearer ${token}`);
   res.setHeader("Access-Control-Expose-Headers", "Authorization");
   
-  return res.status(201).json({ token, message: "Token Generated Successfully", success: true });
+  return res.status(201).json({  message: "Token Generated Successfully", success: true });
 }
 catch(error){
   return res.send({success:false, error:message.error})
@@ -76,11 +79,11 @@ catch(error){
 };
 
 export async function checkAuth(req, res) {
-  const userData = await User.findById(req.user._id)
-  if(!userData){
-    return res.send({success: false, message: "user data not available"})
+  const userData = await User.findById(req.user._id);
+  if (!userData) {
+    return res.send({ success: false, message: "user data not available" });
   }
-  req.userData = userData
-  
+  req.userData = userData;
+
   return res.json({ success: true, userData });
 }

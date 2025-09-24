@@ -23,17 +23,13 @@ export async function ClassifyImage(imageBlob, userText = "") {
   const imagePart = await blobToGenerativePart(imageBlob);
 
   // Prompt
-  const prompt = `You are an expert maintenance dispatcher. Analyze the attached image and classify the issue into EXACTLY one of the following categories:
+  const prompt = `You are an expert maintenance dispatcher. Analyze the attached image and classify the issue into EXACTLY one of the following specific issues:
 
-'Water' (burst pipes, leaks, blocked drains, floods)
-'Electrical' (exposed wires, power outages, faulty switches)
-'Civil' (building infrastructure damage, potholes, road/pavement issues)
-'Sanitation' (garbage management or pest control, sewage, drinage)
-'Animal Control' (street dogs or other animals)
+  "water leakage", "broken water pipe", "street light not working", "broken traffic signal", "power outage", "road damage", "damaged footpath",  "garbage not collected", "blocked drain", "stray animals", "animal attack"
 
-User report (optional): "${userText}"
+  User report (optional): "${userText}"
 
-Return ONLY the single category name.`;
+  Return ONLY the single specific issue from the above list. Do not invent new issues and if you can't find anything from the list then return "couldn't classify provide description"`;
 
   const requestBody = {
     contents: [

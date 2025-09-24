@@ -1,5 +1,5 @@
 import { ArrowLeft, MapPin } from "lucide-react";
-import { createContext, useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import { UserContext } from "../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 
@@ -7,8 +7,7 @@ import { useNavigate } from "react-router-dom";
 export const FormTwo = () => {
   // Safely destructure with fallback
   const {newReport, setNewReport, createReport, loading} = useContext(UserContext) || {};
-  // const newReport = context.newReport || {};
-  // const setNewReport = context.setNewReport || (() => {});
+ 
 console.log(newReport);
 
   // Local state for description
@@ -26,7 +25,7 @@ const navigate= useNavigate()
 
   async function handleSubmit(e){
     e.preventDefault()
-    await createReport(newReport)
+    await createReport()
     console.log("submitted");
     navigate("/");
   }
@@ -100,9 +99,9 @@ const navigate= useNavigate()
 
         {/* Submit Button */}
         <div className="px-4 py-8 shadow-lg bg-gray-50">
-          <button className="w-full bg-blue-600 text-white font-semibold text-center p-4 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-200 transform hover:scale-[1.01] active:scale-100" onClick={handleSubmit} >
-            {/* {loading? "submitting": "submit"} */}
-            Submit
+          <button className="w-full bg-blue-600 text-white font-semibold text-center p-4 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-200 transform hover:scale-[1.01] active:scale-100" disabled= {loading} 
+          onClick={handleSubmit} >
+            {loading? "submitting": "submit"}
           </button>
         </div>
       </div>

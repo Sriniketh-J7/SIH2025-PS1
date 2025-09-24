@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const backendUrl = "http://localhost:5000";
+const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 axios.defaults.baseURL = backendUrl;
 
 // Sign up a new technician
@@ -29,7 +29,7 @@ export async function signup(username, password) {
 export async function login(username, password) {
   try {
     const response = await axios.post("/api/user/login", {
-      username,
+      userName: username,
       password,
     });
 
@@ -39,7 +39,7 @@ export async function login(username, password) {
         token = token.split(" ")[1];
       }
       localStorage.setItem("userAuth", token);
-      return true;
+      return response.data.user;
     }
     throw new Error(response.data.error || "Login failed");
   } catch (error) {
@@ -70,7 +70,7 @@ export async function singleReport(id) {
     const token = localStorage.getItem("userAuth");
     if (!token) return checkAuth();
 
-    const { data } = await axios.get(`/api/report/${id}`, {
+    const { data } = await axios.get(`/api/report/singleReport/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -84,8 +84,8 @@ export async function singleReport(id) {
 
 export async function createReport(report) {
   try {
-    if(!report.title) report.title="no model"
     if (!report) throw new Error("Report object must be provided");
+    if(!report.title) report.title="no model"
     if (!report.title || !report.imageUrl || !report.location) throw new Error("all details to be provided");
 
     const token = localStorage.getItem("userAuth");
@@ -108,7 +108,6 @@ console.log(report.location);
     const { data } = await axios.post("/api/report/create", formData, {
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data", // optional, browser handles it automatically
       },
     });
 
@@ -128,10 +127,9 @@ export async function checkAuth() {
     const token = localStorage.getItem("userAuth");
     if (!token) throw new Error("No auth token found");
 
-    const { data } = await axios.get("/api/report/checkAuth", {
+    const { data } = await axios.get("/api/user/checkAuth", {
       headers: { Authorization: `Bearer ${token}` },
     });
-console.log(data);
 
     if (data.success) return data.userData;
     throw new Error(data.error || "Authentication check failed");

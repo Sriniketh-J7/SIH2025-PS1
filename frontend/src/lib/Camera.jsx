@@ -1,17 +1,15 @@
 import { useState, useRef, useContext } from "react";
 import { TechnicianContext } from "../contexts/TechnicianContext";
-import { Loader } from "lucide-react";
 
-export default function CameraCapture({ reportId, resolveTask }) {
+export default function CameraCapture({ reportId }) {
+  const { setReportDetails } = useContext(TechnicianContext);
 
-  const [camLoading, setCamLoading] = useState(false);
   const [cameraOpen, setCameraOpen] = useState(false);
   const [preview, setPreview] = useState(null);
   const [file, setFile] = useState(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
-  // Open back camera
   const startCamera = async () => {
     setCameraOpen(true);
     try {
@@ -37,8 +35,16 @@ export default function CameraCapture({ reportId, resolveTask }) {
 
     canvas.toBlob((blob) => {
       if (!blob) return;
+      const imgUrl = URL.createObjectURL(blob);
+
       setFile(blob);
-      setPreview(URL.createObjectURL(blob));
+      setPreview(imgUrl);
+
+      // ✅ Directly set resolvedImageUrl in reportDetails
+      setReportDetails((prev) => ({
+        ...prev,
+        resolvedImageUrl: imgUrl,
+      }));
     }, "image/jpeg");
 
     stopCamera();
@@ -49,27 +55,6 @@ export default function CameraCapture({ reportId, resolveTask }) {
     if (stream) stream.getTracks().forEach((track) => track.stop());
     setCameraOpen(false);
   };
-
-  const handleSubmit = async () => {
-    if (!file) return;
-
-    // ✅ Let parent handle API call
-    setCamLoading(true)
-    await resolveTask(reportId, file);
-    setCamLoading(false)
-
-    // Reset after submit
-    setPreview(null);
-    setFile(null);
-  };
-
-  if (camLoading) {
-    return (
-      <div className="p-6 bg-white rounded-xl shadow-md text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent mx-auto"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="p-6 bg-white rounded-xl shadow-md space-y-4 max-w-md mx-auto">
@@ -107,24 +92,16 @@ export default function CameraCapture({ reportId, resolveTask }) {
       {preview && (
         <div className="flex flex-col items-center space-y-2">
           <img src={preview} alt="Preview" className="w-full rounded-md" />
-          <div className="space-x-2">
-            <button
-              onClick={handleSubmit}
-              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full"
-            >
-              Submit
-            </button>
-            <button
-              onClick={() => {
-                setPreview(null);
-                setFile(null);
-                startCamera()
-              }}
-              className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-full"
-            >
-              Retake
-            </button>
-          </div>
+          <button
+            onClick={() => {
+              setPreview(null);
+              setFile(null);
+              startCamera();
+            }}
+            className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-full"
+          >
+            Retake
+          </button>
         </div>
       )}
 

@@ -1,5 +1,5 @@
 import { useState, useRef, useContext, useEffect } from "react";
-import { Camera } from "lucide-react";
+import { ArrowLeft, Camera } from "lucide-react";
 import { UserContext } from "../contexts/UserContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -127,22 +127,13 @@ export const UserNewReport = () => {
     <div className="min-h-screen bg-gray-100 font-sans">
       {/* Header */}
       <header className="bg-white shadow-sm p-4 flex items-center gap-3 border-b border-gray-200">
-        <button className="text-gray-600 hover:text-gray-900 transition-colors duration-200">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="2.0"
-            stroke="currentColor"
-            className="size-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
-            />
-          </svg>
+        <button
+          className="text-gray-600 hover:text-gray-900 transition-colors duration-200 mr-2"
+          onClick={() => navigate("/userReportsPage")}
+        >
+          <ArrowLeft className="w-7 h-7" />
         </button>
+
         <div>
           <h1 className="text-lg font-semibold text-gray-800">
             Report New Issue

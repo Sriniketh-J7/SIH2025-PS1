@@ -6,7 +6,7 @@ export const FooterNav = () => {
     "flex flex-col items-center text-xs transition-colors duration-200";
 
   return (
-    <div className="fixed bottom-3 left-0 w-full flex justify-around items-center border-t py-3 bg-white">
+    <div className="fixed bottom-0 z-50 left-0 w-full flex justify-around items-center border-t py-3 bg-white">
       <NavLink
         to="/"
         className={({ isActive }) =>
@@ -34,7 +34,7 @@ export const FooterNav = () => {
         }
       >
         <Globe className="w-5 h-5" />
-        <span>Report</span>
+        <span>Explore</span>
       </NavLink>
 
       <NavLink

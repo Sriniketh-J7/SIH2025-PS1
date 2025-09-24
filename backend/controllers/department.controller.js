@@ -117,6 +117,7 @@ export async function SingleReport(req, res) {
         message: "report not assigned to your department",
       });
     }
+console.log(report);
 
     return res.json({
       success: true,
@@ -141,7 +142,6 @@ export async function assignTechnician(req, res) {
         .status(400)
         .json({ success: false, message: "Technician ID is required" });
     }
-
     if (!reportId) {
       return res
         .status(400)
@@ -191,15 +191,14 @@ export async function getAllTechnicians(req, res) {
         .status(401)
         .json({ success: false, message: "Not authorized" });
     }
-    const department = await Department.findOne({ deptName }).populate(
-      "technicians"
-    );
-
-    if (!department || department.technicians.length === 0) {
+    
+    const listTechs = await Technician.find({ deptName })
+    
+    if (!listTechs || listTechs.length === 0) {
       return res.json({ success: false, message: "No technicians found" });
     }
 
-    return res.json({ success: true, technicians: department.technicians });
+    return res.json({ success: true, technicians: listTechs });
   } catch (error) {
     res.status(500).json({
       success: false,
