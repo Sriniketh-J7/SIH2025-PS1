@@ -1,11 +1,12 @@
 import React, { useContext, useState } from "react";
 import { KeyRound, UserRound, Mail } from "lucide-react";
 import { UserContext } from "../contexts/UserContext";
+import { useNavigate } from "react-router-dom";
 // import { DepartmentContext } from "../contexts/DepartmentContext";
 
 export const SignIn = () => {
   const {login} = useContext(UserContext)
-
+const navigate = useNavigate()
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -37,7 +38,13 @@ export const SignIn = () => {
     }
 
     // API call
-    await login(username, password);
+    const success = await login(username, password);
+    if(!success){
+      alert("login failed")
+      setIsSubmitting(false)
+      return
+    }
+    navigate("/")
   };
 
   return (

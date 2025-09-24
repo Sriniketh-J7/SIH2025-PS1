@@ -12,17 +12,19 @@ import Profile from "./Components/UserDashboards/Profile" ;
 import Test from "./pages/Test"
 import { UserLayout } from './pages/UserLayout'
 import {SelectedReport} from './pages/SelectedReport'
+import { useContext } from 'react'
+import { UserContext } from './contexts/UserContext'
 
 
 
 export default function App() {
-
+const {userData} = useContext(UserContext)
   return (
     <>
       <BrowserRouter>
         <Routes>
           <Route path="/signup" element={<SignUp />}></Route>
-          <Route path="/login" element={<SignIn></SignIn>}></Route>
+          <Route path="/login" element={<SignIn/>}></Route>
 
           <Route
             path="/TechDashboard"

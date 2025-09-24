@@ -39,7 +39,7 @@ export async function login(username, password) {
         token = token.split(" ")[1];
       }
       localStorage.setItem("userAuth", token);
-      return response.data.user;
+      return response.data.success;
     }
     throw new Error(response.data.error || "Login failed");
   } catch (error) {
