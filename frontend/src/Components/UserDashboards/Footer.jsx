@@ -28,7 +28,7 @@ export const FooterNav = () => {
       </NavLink>
 
       <NavLink
-        to="/reportIssue"
+        to="/explore"
         className={({ isActive }) =>
           `${linkClass} ${isActive ? "text-blue-500" : "text-gray-400"}`
         }

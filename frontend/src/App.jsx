@@ -14,7 +14,7 @@ import { UserLayout } from './pages/UserLayout'
 import {SelectedReport} from './pages/SelectedReport'
 import { useContext } from 'react'
 import { UserContext } from './contexts/UserContext'
-
+import Explore from "./pages/Explore" 
 
 
 export default function App() {
@@ -39,6 +39,7 @@ const {userData} = useContext(UserContext)
             <Route path="/singlereport/:reportId" element={<SelectedReport />} />
             <Route path="/reportIssue" element={<UserNewReport />} />
             <Route path="/form2" element={<FormTwo />} />
+            <Route path="/explore" element={<Explore />} />
             <Route path="/profile" element={<Profile />} />
             {/* <Route path="/" element={<TestImageClassify />} /> */}
           </Route>
