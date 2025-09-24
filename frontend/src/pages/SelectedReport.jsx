@@ -134,7 +134,7 @@ export const SelectedReport = () => {
             className="flex items-center space-x-2 text-slate-600 mb-4 sm:mb-0 hover:cursor-pointer"
             onClick={() => navigate("/userReportsPage")}
           >
-            <ArrowLeft/>
+            <ArrowLeft />
             <span className="text-sm font-medium">Back to Reports</span>
           </div>
           <div className="text-2xl font-semibold">Report Details</div>
@@ -246,6 +246,10 @@ export const SelectedReport = () => {
                   zoom={15}
                   className="h-48 w-full rounded-md"
                 >
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
                   <Marker
                     position={[
                       reportDetails.location.latitude,

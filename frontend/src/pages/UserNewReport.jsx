@@ -17,7 +17,7 @@ async function getCurrentLocation() {
 
         try {
           const apiKey = "pk.3a86dbc9e018d8762ff765be4cd2cd18"; // Your real key
-          const url = `https://us1.locationiq.com/v1/reverse?key=${apiKey}&lat=${lat}&lon=${lon}&format=json`;
+          const url = `https://us1.locationiq.com/v1/reverse?key=${apiKey}&lat=${lat}&lon=${lon}&format=json&accept-language=en`;
           const { data } = await axios.get(url);
 
           let address = data.display_name || "";
@@ -202,7 +202,13 @@ export const UserNewReport = () => {
             <div className="w-full space-y-3">
               <img src={preview} alt="Preview" className="w-full rounded-md" />
               {newReport?.location?.address && (
-                <p className="text-sm text-gray-700">
+                <p
+                  className="text-sm text-gray-700"
+                  style={{ fontFamily: "Arial, sans-serif" }}
+                  spellCheck={false}
+                  autoCorrect="off"
+                  autoCapitalize="off"
+                >
                   📍 Location: {newReport.location.address} <br />
                   Lat: {newReport.location.latitude}, Lon:{" "}
                   {newReport.location.longitude}
