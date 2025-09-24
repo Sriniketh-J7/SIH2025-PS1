@@ -34,7 +34,9 @@ app.use("/api/technician", technicianRoutes);
 app.use("/api/department", deptRouter)
 // app.use("/reportAssign", assignTechnician)
 
-
+app.get("/", (req, res)=>{
+  console.log("working ");
+})
 
 //starting the server
 app.listen(PORT, () => {
