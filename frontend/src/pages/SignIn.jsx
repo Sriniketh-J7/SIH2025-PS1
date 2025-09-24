@@ -39,6 +39,8 @@ const navigate = useNavigate()
 
     // API call
     const success = await login(username, password);
+    console.log("singin: ", success);
+    
     if(!success){
       alert("login failed")
       setIsSubmitting(false)

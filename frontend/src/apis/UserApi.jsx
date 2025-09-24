@@ -32,6 +32,7 @@ export async function login(username, password) {
       userName: username,
       password,
     });
+console.log("rd: ", response.data);
 
     if (response.data.success) {
       let token = response.headers["authorization"];
