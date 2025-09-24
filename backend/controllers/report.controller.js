@@ -33,6 +33,8 @@ export const createReport = async (req, res) => {
       });
 
       await newReport.save();
+      console.log("bcked");
+      
       res.json({success:true, message: "Report created successfully", report: newReport });
       
     } catch (error) {
