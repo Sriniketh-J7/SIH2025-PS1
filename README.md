@@ -1,9 +1,9 @@
-# 🏙️ Civic Report App
+# 🏙️ SnapFix- Civic Report Platform
 A MERN-stack application that allows citizens to report local civic issues (like potholes, waste, or broken infrastructure) with image uploads, live updates, and AI-based image classification.
 
 ## 🌐 Live Demo
 🎥 **YouTube Demo:** [Watch on YouTube](https://youtu.be/u7jqRsIpRh0)
-🚀 **Deployed App:** [Try it Live](https://sih-1-frontend.vercel.app/)
+🚀 **Deployed App:** [Try it Live on Mobile](https://sih-1-frontend.vercel.app/)
 
 ---
 
