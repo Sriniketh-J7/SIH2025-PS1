@@ -32,6 +32,7 @@ export async function getTasks() {
     const { data } = await axios.get("/api/technician/alltasks", {
       headers: { Authorization: `Bearer ${token}` },
     });
+console.log(data);
 
     if (data.success) {
       return data.tasksAssigned;

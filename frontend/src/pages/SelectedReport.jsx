@@ -272,6 +272,24 @@ export const SelectedReport = () => {
             </div>
           </aside>
         </div>
+
+        {/* Feedback Form */}
+        {
+          !reportDetails.resolvedImageUrl ? "" : 
+        
+        <div className="bg-white p-6 rounded-xl shadow-md space-y-4 mt-6">
+          <h2 className="text-xl font-bold">Your Feedback</h2>
+          <textarea
+            className="w-full h-28 p-3 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Write your feedback here..."
+          />
+          <button
+            className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md shadow hover:bg-blue-700 transition"
+          >
+            Send Feedback
+          </button>
+        </div>
+        }
       </div>
       <div className="h-20"></div>
     </div>

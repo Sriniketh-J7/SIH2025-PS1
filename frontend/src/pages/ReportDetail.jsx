@@ -4,6 +4,22 @@ import { TechnicianContext } from "../contexts/TechnicianContext";
 import {formatDate} from "../lib/utils"
 import CameraCapture  from "../lib/Camera";
 
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+
+
+// Fix Leaflet marker issue with Webpack
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+  iconUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+});
+
 export const ReportDetail = () => {
   const { loading, getSingleTask, resolveTask, startTask } =
     useContext(TechnicianContext);
@@ -139,8 +155,10 @@ export const ReportDetail = () => {
       <div className="w-full max-w-7xl mx-auto">
         {/* Header Section */}
         <header className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center space-x-2 text-slate-600 mb-4 sm:mb-0 hover: cursor-pointer" 
-              onClick={() => navigate("/TechDashboard")}>
+          <div
+            className="flex items-center space-x-2 text-slate-600 mb-4 sm:mb-0 hover: cursor-pointer"
+            onClick={() => navigate("/TechDashboard")}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-4 w-4"
@@ -155,11 +173,7 @@ export const ReportDetail = () => {
                 d="M10 19l-7-7m0 0l7-7m-7 7h18"
               />
             </svg>
-            <span
-              className="text-sm font-medium"
-            >
-              Back to Reports
-            </span>
+            <span className="text-sm font-medium">Back to Reports</span>
           </div>
           <div className="text-2xl font-semibold">Report Details</div>
           <div className="text-sm text-slate-500">
@@ -266,7 +280,10 @@ export const ReportDetail = () => {
                   {/* <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition-colors">
                     Click Photo
                   </button> */}
-                  <CameraCapture resolveTask={resolveTask} reportId={reportId} />
+                  <CameraCapture
+                    resolveTask={resolveTask}
+                    reportId={reportId}
+                  />
                 </div>
               </div>
             )}
@@ -294,65 +311,51 @@ export const ReportDetail = () => {
                   <span className="font-semibold">{status}</span>
                 </p>
               </div>
+              <button
+                onClick={handleStatusUpdate}
+                className="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition-colors"
+              >
+                Update Status
+              </button>
             </div>
 
             {/* Location Map Card */}
-            <div className="bg-white p-6 rounded-xl shadow-md space-y-4">
+            <div className="bg-white p-4 rounded-xl shadow-md space-y-4">
               <h2 className="text-xl font-bold">Location Map</h2>
-              <div className="bg-slate-200 h-48 rounded-md flex items-center justify-center text-slate-500 flex-col">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8 text-slate-400 mb-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2"
+
+              {reportDetails?.location?.latitude &&
+              reportDetails?.location?.longitude ? (
+                <MapContainer
+                  center={[
+                    reportDetails.location.latitude,
+                    reportDetails.location.longitude,
+                  ]}
+                  zoom={15}
+                  className="h-64 w-full rounded-md"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-                <div className="text-center">
-                  <p className="text-sm font-semibold">Interactive Map</p>
-                  <p className="text-xs text-slate-400">Main St & 5th Ave</p>
-                </div>
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-slate-700 uppercase mb-1">
-                  Address
-                </h3>
-                <div className="text-sm text-slate-600 flex items-center space-x-1">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 text-slate-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
+                  <Marker
+                    position={[
+                      reportDetails.location.latitude,
+                      reportDetails.location.longitude,
+                    ]}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
-                  <span className="text-xs text-slate-400">
+                    <Popup>
+                      {reportDetails?.location?.address || "Reported Location"}
+                    </Popup>
+                  </Marker>
+                </MapContainer>
+              ) : (
+                <div className="bg-slate-200 h-64 rounded-md flex items-center justify-center text-slate-500 flex-col">
+                  <p className="text-sm font-semibold">Interactive Map</p>
+                  <p className="text-xs text-slate-400">
                     {reportDetails?.location?.address || "address"}
-                  </span>
+                  </p>
                 </div>
-              </div>
+              )}
             </div>
           </aside>
         </div>

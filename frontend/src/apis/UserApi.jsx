@@ -91,6 +91,7 @@ export async function createReport(report) {
 
     const token = localStorage.getItem("userAuth");
     if (!token) return checkAuth();
+console.log("oking");
 
     const formData = new FormData();
 
