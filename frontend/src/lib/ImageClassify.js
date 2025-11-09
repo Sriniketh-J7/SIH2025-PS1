@@ -1,5 +1,5 @@
 export async function ClassifyImage(imageBlob, userText = "") {
-  const API_KEY = "AIzaSyDL2oLHbKx0Z4sASY9zZKbw1vQfjYpofAc";
+  const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
   const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`;
 
   // Convert Blob to base64 inlineData
